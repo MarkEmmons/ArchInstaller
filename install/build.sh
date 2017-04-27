@@ -1,33 +1,19 @@
 #!/bin/bash
 
 # Do we need zsh?
-#which zsh &> /dev/null
-#if [[ $?==1 ]]; then
-#    sudo pacman -S zsh
-#    chsh -s $(which zsh)
-#    zsh
-#fi
+which zsh &> /dev/null
+if [[ $? -eq 1 ]]; then
+    sudo pacman -S zsh
+    chsh -s $(which zsh)
+    zsh
+fi
 
 # Install Vim and dependencies
-sudo pacman -S vim ctags clang cmake rust python2
+sudo pacman -S vim ctags clang cmake python2
 
 # Setup Pacaur and YCM
 wget https://aur.archlinux.org/cgit/aur.git/snapshot/cower.tar.gz
 wget https://aur.archlinux.org/cgit/aur.git/snapshot/pacaur.tar.gz
-
-# Install Cower
-tar -xvf cower.tar.gz
-gpg --list-keys
-sudo echo "keyring /etc/pacman.d/gnupg/pubring.gpg" >> ~/.gnupg/gpg.conf
-export PATH=$PATH:/usr/bin/core_perl
-cd cower
-makepkg -sri
-
-# Install Pacaur
-tar -xvf pacaur.tar.gz
-cd pacaur
-makepkg -sri
-cd ~
 
 # Install Pathogen
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
