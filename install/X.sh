@@ -21,12 +21,8 @@ sudo pacman -S $PACKAGES1
 sudo pacman -S $PACKAGES2
 sudo pacman -S $PACKAGES3
 
-lspci | grep VirtualBox &> /dev/null
-if [[ $? -ne 0 ]]; then
-	x_for_thinkpad
-else
-	x_for_vbox
-fi
+#x_for_thinkpad
+x_for_vbox
 
 echo "exec 13" > .xinitrc
 
