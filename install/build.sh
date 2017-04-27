@@ -156,23 +156,32 @@ build(){
 	sudo rm /usr/sbin/build
 }
 
-while [[ $# -gt 1 ]]
-do
-key="$1"
+# Build is designed to be run one step at a time. 
+# If more arguments are given we exit with error.
 
-case $key in
+if [[ $# -ne 1 ]]; then
+	echo "ERROR: Expected exactly 1 argument got $#."
+	exit 1
+fi
+
+case $1 in
 	-c|--create-admin)
-	create_admin
-	;;	
+		echo "Running create_admin..."
+		create_admin
+		;;	
 	-f|--install-firmware)
-	install_firmware
-	;;
+		echo "Running install_firmware..."
+		install_firmware
+		;;
 	-x|--install-x)
-	install_x
-	;;
+		echo "Running install_x..."
+		install_x
+		;;
 	-b|--build)
-	build
-	;;
+		echo "Running build..."
+		build
+		;;
+	*)
+		echo "ERROR: Unknown argument $key."
+		;;
 esac
-shift
-done
