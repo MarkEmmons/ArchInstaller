@@ -31,13 +31,15 @@ partition(){
 	vgcreate ArchLinux /dev/mapper/lvm
 	
 	# Create all of the logical volumes on the volume group
-	lvcreate -L 5G ArchLinux -n rootvol
-	lvcreate -L 1G ArchLinux -n swapvol
-	lvcreate -l +100%FREE ArchLinux -n homevol
+	lvcreate -L 10G ArchLinux -n rootvol
+	lvcreate -L 2G ArchLinux -n swapvol
+	lvcreate -L 20G ArchLinux -n homevol
+	lvcreate -l +100%FREE ArchLinux -n pool
 
 	# Format the filesystems on each logical volume
 	mkfs.btrfs /dev/mapper/ArchLinux-rootvol
 	mkfs.btrfs /dev/mapper/ArchLinux-homevol
+	mkfs.btrfs /dev/mapper/ArchLinux-pool
 	mkfs.ext4 /dev/sda2 < /dev/tty
 	mkswap /dev/mapper/ArchLinux-swapvol
 
