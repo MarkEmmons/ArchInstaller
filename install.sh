@@ -29,32 +29,10 @@ partition(){
 
 	# Create the volume group ArchLinux, adding the previously created physical volume to it
 	vgcreate ArchLinux /dev/mapper/lvm
-
-	# Determine disk space
-	DISK=$(pvs | grep /dev/mapper/lvm | awk '{print $5}')
-	d=$(echo "${DISK//[!0-9]/}")
-
-	swapt=$(cat /proc/meminfo | grep MemTotal | awk '{print $2}')
-	swap=$(echo "$swapt / 1000" | bc)
-
-    if [[ $(echo "$d < 800" | bc) == 1 ]]; then
-        echo "At least 8G required for this installation."
-		exit
-    else
-		root=$(echo "0.001 * $d" | bc)
-		if [[ $(echo "$d < 2000" | bc) == 1 ]]; then
-			root=2
-			swap=512
-		fi
-		if [[ $(echo "$d > 20000" | bc) == 1 ]]; then
-			root=20
-		fi
-    fi
-
 	
 	# Create all of the logical volumes on the volume group
-	lvcreate -L ${root}G ArchLinux -n rootvol
-	lvcreate -L ${swap}M ArchLinux -n swapvol
+	lvcreate -L 5G ArchLinux -n rootvol
+	lvcreate -L 1G ArchLinux -n swapvol
 	lvcreate -l +100%FREE ArchLinux -n homevol
 
 	# Format the filesystems on each logical volume

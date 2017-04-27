@@ -7,10 +7,8 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 export LANG=en_US.UTF-8
 
-# SSD Optimization
+# Remove when moving from VirtualBox
 systemctl enable dhcpcd.service
-systemctl enable fstrim.service
-systemctl enable fstrim.timer
 
 # Configure clock
 ln -s /usr/share/zoneinfo/US/Central /etc/localtime 
