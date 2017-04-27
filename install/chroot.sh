@@ -54,8 +54,3 @@ chmod u+x /usr/sbin/create_admin
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/X.sh
 mv X.sh /usr/sbin/inx
 chmod a+x /usr/sbin/inx
-
-# wget https://raw.github.com/markemmons/Dotfilr/master/dotfilr.sh
-wget https://raw.github.com/MarkEmmons/Dotfilr/master/Arch/wDotfilr.sh
-mv wDotfilr.sh /usr/sbin/dotfilr
-chmod a+x /usr/sbin/dotfilr
