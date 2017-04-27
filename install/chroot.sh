@@ -47,10 +47,6 @@ passwd < /dev/tty
 chsh -s $(which zsh)
 
 # Download post-installation build scripts
-wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/create_admin.sh
-mv create_admin.sh /usr/sbin/create_admin
-chmod u+x /usr/sbin/create_admin
-
-wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/X.sh
-mv X.sh /usr/sbin/inx
-chmod a+x /usr/sbin/inx
+wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
+mv build.sh /usr/sbin/build
+chmod a+x /usr/sbin/build
