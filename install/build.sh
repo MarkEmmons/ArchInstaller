@@ -70,7 +70,7 @@ install_x(){
 	#x_for_thinkpad
 	x_for_vbox
 
-	echo "exec 13" > .xinitrc
+	echo "exec i3" > .xinitrc
 	[[ -f .Xauthority ]] && rm .Xauthority
 
 }
