@@ -113,7 +113,7 @@ build(){
 	cd $HOME
 
 	# Retrieve dotfiles
-	rm -r .xinitrc .zshrc
+	rm -rf .xinitrc .zshrc
 	git clone https://github.com/MarkEmmons/dotfiles.git
 	export PATH=$PATH:$HOME/dotfiles/bin
 	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
