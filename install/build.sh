@@ -21,7 +21,7 @@ create_admin(){
 	passwd $USER1
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
 	
-	echo "\#Placeholder" >> /home/$USER1/.zshrc
+	echo "# Placeholder" >> /home/$USER1/.zshrc
 
 }
 
