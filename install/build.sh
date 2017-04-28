@@ -55,10 +55,10 @@ install_x(){
 	}
 
 	# Run when installing on personal computer
-	x_for_thinkpad(){
-		sudo Xorg :0 -configure
-		sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
-	}
+	#x_for_thinkpad(){
+	#	sudo Xorg :0 -configure
+	#	sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
+	#}
 
 	sudo pacman -S $PACKAGES1
 	sudo pacman -S $PACKAGES2
@@ -72,7 +72,7 @@ install_x(){
 
 }
 
-# Install final miscellaneous packages, must be run as user with root-privileges
+# Install final miscellaneous packages, must be run as user with root-privileges in an X session
 build(){
 	
 	# Install additional packages
@@ -117,7 +117,7 @@ build(){
 	git clone https://github.com/MarkEmmons/dotfiles.git
 	export PATH=$PATH:$HOME/dotfiles/bin
 	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
-	chmod u+x $HOME/dotfiles/bin/dotfiles
+	chmod u+x $HOME/dotfiles/bin/*
 	
 	# "Install" dotfiles
 	dotfiles --install
