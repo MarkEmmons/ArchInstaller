@@ -73,6 +73,45 @@ install_x(){
 
 }
 
+# Get aur packages (compile manually)
+get_aur_packages(){
+
+	cd $HOME
+
+	# Create packages directory if it does not already exist
+	if [[ ! -d "packages" ]]; then
+		mkdir packages
+	fi
+	cd packages
+
+	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	
+	# Get Expressvpn
+	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
+	tar -xvf expressvpn.tar.gz
+	
+	# Get Spotify
+	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
+	tar -xvf spotify.tar.gz
+	
+}
+
+# Get dotfiles
+get_dotfiles(){
+
+	cd $HOME
+
+	# Retrieve dotfiles
+	rm -rf .xinitrc .zshrc
+	git clone https://github.com/MarkEmmons/dotfiles.git
+
+	# Add dotfile scripts to path and make executable
+	export PATH=$PATH:$HOME/dotfiles/bin
+	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
+	chmod u+x $HOME/dotfiles/bin/*
+
+}
+
 # Install final miscellaneous packages and dotfiles. Must be run in X session
 build(){
 	
@@ -95,33 +134,14 @@ build(){
 	groupadd docker
 	gpasswd -a $SUDO_USER docker
 
-	# Create packages directory if it does not already exist
-	if [[ ! -d "packages" ]]; then
-		mkdir packages
-	fi
-	cd packages
-
-	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	# Get aur packages (compile manually)
+	sudo -u $SUDO_USER get_aur_packages
 	
-	# Get Expressvpn
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
-	tar -xvf expressvpn.tar.gz
-	gpg --recv-key AFF2A1415F6A3A38
-	
-	# Get Spotify
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
-	tar -xvf spotify.tar.gz
-	cd /home/$SUDO_USER
-
-	# Retrieve dotfiles
-	rm -rf .xinitrc .zshrc
-	git clone https://github.com/MarkEmmons/dotfiles.git
-	export PATH=$PATH:/home/$SUDO_USER/dotfiles/bin
-	mv /home/$SUDO_USER/dotfiles/bin/dotfiles.sh /home/$SUDO_USER/dotfiles/bin/dotfiles
-	chmod u+x /home/$SUDO_USER/dotfiles/bin/*
+	# Get dotfiles
+	sudo -u $SUDO_USER get_dotfiles
 	
 	# "Install" dotfiles
-	dotfiles --install
+	sudo -u $SUDO_USER dotfiles --install
 	
 	# Don't need this anymore
 	rm /usr/sbin/build
@@ -129,7 +149,7 @@ build(){
 }
 
 # User must run build with root privileges
-if [[ $EUID != 0 ]]; then
+if [[ $EUID -ne 0 ]]; then
 	echo "error: you cannot perform this operation unless you are root."
 	exit 1
 fi
