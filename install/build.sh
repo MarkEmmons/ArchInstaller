@@ -77,7 +77,7 @@ install_x(){
 build(){
 	
 	# Install additional packages
-	DEV_PACKAGES="btrfs-progs ctags clang cmake gnupg lvm2 net-tools"
+	DEV_PACKAGES="btrfs-progs ctags clang cmake net-tools"
 	WEBDEV_PACKAGES="nodejs npm yarn mongodb mongodb-tools"
 	LANG_PACKAGES="ruby rust valgrind"
 	TOOL_PACKAGES="leafpad parallel scrot"

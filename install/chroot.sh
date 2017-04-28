@@ -1,5 +1,4 @@
 # Generate locales
-cp /etc/locale.gen /etc/locale.gen.backup
 sed 's|#en_US|en_US|' -i /etc/locale.gen
 locale-gen
 
@@ -11,6 +10,7 @@ export LANG=en_US.UTF-8
 systemctl enable dhcpcd.service
 
 # Configure clock
+[[ -f /etc/localtime ]] && rm /etc/localtime
 ln -s /usr/share/zoneinfo/US/Central /etc/localtime 
 hwclock --systohc --utc
 
