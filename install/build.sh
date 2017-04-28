@@ -20,6 +20,8 @@ create_admin(){
 	useradd -m -G wheel -s /bin/zsh $USER1
 	passwd $USER1
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
+	
+	echo "\#Placeholder" >> /home/$USER1/.zshrc
 
 }
 
@@ -32,27 +34,22 @@ install-firmware(){
 	wget https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
 	tar -xvf b43-firmware.tar.gz
 	
-	# Build and install package
+	# Prompt user to build package manually for safety and consistency reasons
 	cd b43-firmware/
-	# TODO assert PKGBUILD
-	makepkg -si
-
-	# Remove tarball
-	cd ../
-	rm b43-firmware.tar.gz
-	cd $HOME
+	ls
+	echo "Verify PKGBUILD and run makepkg -si"
 	
 }
 
 # Install X Window System, must be run as user with root-privileges
 install_x(){
+	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
-	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys"
+	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
 	PACKAGES3="xorg-server xorg-server-utils xorg-xinit xorg-xclock xorg-twm"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		sudo pacman -S xorg
 		sudo pacman -S virtualbox-guest-modules-arch virtualbox-guest-utils
 		sudo modprobe -a vboxguest vboxsf vboxvideo
 	}
@@ -77,17 +74,54 @@ install_x(){
 
 # Install final miscellaneous packages, must be run as user with root-privileges
 build(){
+	
+	# Install additional packages
+	DEV_PACKAGES="btrfs-progs ctags clang cmake gnupg lvm2 net-tools"
+	WEBDEV_PACKAGES="nodejs npm yarn mongodb mongodb-tools"
+	LANG_PACKAGES="ruby rust valgrind"
+	TOOL_PACKAGES="leafpad parallel scrot"
+	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
+
+	sudo pacman -S $DEV_PACKAGES
+	sudo pacman -S $WEBDEV_PACKAGES
+	sudo pacman -S $LANG_PACKAGES
+	sudo pacman -S $TOOL_PACKAGES
+
+	# Configure docker, for more info consult the wiki
+	sudo tee /etc/modules-load.d/loop.conf <<< "loop"
+	sudo modprobe loop
+	sudo pacman -S $VM_PACKAGES
+	sudo groupadd docker
+	sudo gpasswd -a $USER docker
+
+	# Create packages directory if it does not already exist
+	if [[ ! -d "packages" ]]; then
+		mkdir packages
+	fi
+	cd packages
+
+	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	
+	# Get Expressvpn
+	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
+	tar -xvf expressvpn.tar.gz
+	gpg --recv-key AFF2A1415F6A3A38
+	
+	# Get Spotify
+	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
+	tar -xvf spotify.tar.gz
+	cd $HOME
 
 	# Retrieve dotfiles
-	rm .xinitrc
+	rm -r .xinitrc .zshrc
 	git clone https://github.com/MarkEmmons/dotfiles.git
-
-	# Install Vim and dependencies
-	sudo pacman -S vim ctags clang cmake python2
-
-	#export PATH=$PATH:$HOME/dotfiles/bin
-	# Needs to be finished
-
+	export PATH=$PATH:$HOME/dotfiles/bin
+	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
+	chmod u+x $HOME/dotfiles/bin/dotfiles
+	
+	# "Install" dotfiles
+	dotfiles --install
+	
 	sudo rm /usr/sbin/build
 }
 
