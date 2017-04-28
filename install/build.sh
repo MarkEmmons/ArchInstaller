@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Create a user with root-privileges, must be run as root
+# Create a user with root-privileges
 create_admin(){
 
 	USER1="a"
@@ -21,11 +21,12 @@ create_admin(){
 	passwd $USER1
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
 	
+	# Create placeholder zshrc to avoid unnecessary warnings
 	echo "# Placeholder" >> /home/$USER1/.zshrc
 
 }
 
-# Install 3rd party device driver for Thinkpad wifi-card, must be run as user with root-privileges
+# Install 3rd party device driver for Thinkpad wifi-card
 install-firmware(){
 	
 	# Retrieve and unpackage tarball
@@ -41,7 +42,7 @@ install-firmware(){
 	
 }
 
-# Install X Window System, must be run as user with root-privileges
+# Install X Window System
 install_x(){
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
@@ -50,8 +51,8 @@ install_x(){
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		sudo pacman -S virtualbox-guest-modules-arch virtualbox-guest-utils
-		sudo modprobe -a vboxguest vboxsf vboxvideo
+		pacman -S virtualbox-guest-modules-arch virtualbox-guest-utils
+		modprobe -a vboxguest vboxsf vboxvideo
 	}
 
 	# Run when installing on personal computer
@@ -60,9 +61,9 @@ install_x(){
 	#	sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
 	#}
 
-	sudo pacman -S $PACKAGES1
-	sudo pacman -S $PACKAGES2
-	sudo pacman -S $PACKAGES3
+	pacman -S $PACKAGES1
+	pacman -S $PACKAGES2
+	pacman -S $PACKAGES3
 
 	#x_for_thinkpad
 	x_for_vbox
@@ -72,7 +73,7 @@ install_x(){
 
 }
 
-# Install final miscellaneous packages, must be run as user with root-privileges in an X session
+# Install final miscellaneous packages and dotfiles. Must be run in X session
 build(){
 	
 	# Install additional packages
@@ -82,17 +83,17 @@ build(){
 	TOOL_PACKAGES="leafpad parallel scrot"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
-	sudo pacman -S $DEV_PACKAGES
-	sudo pacman -S $WEBDEV_PACKAGES
-	sudo pacman -S $LANG_PACKAGES
-	sudo pacman -S $TOOL_PACKAGES
+	pacman -S $DEV_PACKAGES
+	pacman -S $WEBDEV_PACKAGES
+	pacman -S $LANG_PACKAGES
+	pacman -S $TOOL_PACKAGES
 
 	# Configure docker, for more info consult the wiki
-	sudo tee /etc/modules-load.d/loop.conf <<< "loop"
-	sudo modprobe loop
-	sudo pacman -S $VM_PACKAGES
-	sudo groupadd docker
-	sudo gpasswd -a $USER docker
+	tee /etc/modules-load.d/loop.conf <<< "loop"
+	modprobe loop
+	pacman -S $VM_PACKAGES
+	groupadd docker
+	gpasswd -a $USER docker
 
 	# Create packages directory if it does not already exist
 	if [[ ! -d "packages" ]]; then
@@ -122,17 +123,24 @@ build(){
 	# "Install" dotfiles
 	dotfiles --install
 	
-	sudo rm /usr/sbin/build
+	# Don't need this anymore
+	rm /usr/sbin/build
+
 }
 
-# Build is designed to be run one step at a time. 
-# If more arguments are given we exit with error.
-
-if [[ $# -ne 1 ]]; then
-	echo "ERROR: Expected exactly 1 argument got $#."
+# User must run build with root privileges
+if [[ $EUID != 0 ]]; then
+	echo "error: you cannot perform this operation unless you are root."
 	exit 1
 fi
 
+# User must provide exactly one argument
+if [[ $# -ne 1 ]]; then
+	echo "error: expected exactly 1 argument got $#."
+	exit 1
+fi
+
+# Pick an installation step
 case $1 in
 	-c|--create-admin)
 		echo "Running create_admin..."
