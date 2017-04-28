@@ -93,7 +93,7 @@ build(){
 	modprobe loop
 	pacman -S $VM_PACKAGES
 	groupadd docker
-	gpasswd -a $USER docker
+	gpasswd -a $SUDO_USER docker
 
 	# Create packages directory if it does not already exist
 	if [[ ! -d "packages" ]]; then
@@ -111,14 +111,14 @@ build(){
 	# Get Spotify
 	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
 	tar -xvf spotify.tar.gz
-	cd $HOME
+	cd /home/$SUDO_USER
 
 	# Retrieve dotfiles
 	rm -rf .xinitrc .zshrc
 	git clone https://github.com/MarkEmmons/dotfiles.git
-	export PATH=$PATH:$HOME/dotfiles/bin
-	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
-	chmod u+x $HOME/dotfiles/bin/*
+	export PATH=$PATH:/home/$SUDO_USER/dotfiles/bin
+	mv /home/$SUDO_USER/dotfiles/bin/dotfiles.sh /home/$SUDO_USER/dotfiles/bin/dotfiles
+	chmod u+x /home/$SUDO_USER/dotfiles/bin/*
 	
 	# "Install" dotfiles
 	dotfiles --install
