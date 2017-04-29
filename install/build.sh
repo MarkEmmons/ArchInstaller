@@ -44,8 +44,6 @@ install-firmware(){
 
 # Install X Window System
 install_x(){
-
-	mount /dev/sda2 /boot
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
@@ -77,8 +75,6 @@ install_x(){
 
 # Install final miscellaneous packages and dotfiles. Must be run in X session
 build(){
-
-	mount /dev/sda2 /boot
 	
 	# Install additional packages
 	DEV_PACKAGES="btrfs-progs ctags clang cmake net-tools"
