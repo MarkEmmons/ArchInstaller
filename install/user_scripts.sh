@@ -3,11 +3,13 @@
 # Get aur packages (compile manually)
 get_aur_packages(){
 
+	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+
 	AUR_PACKAGES=( https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
 	https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
 	https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz )
 
-	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	# Retrieve snapshots via parallel trickery
 	mkdir $HOME/packages
 	cd $HOME/packages && \
 	printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "curl {} | tar -xz"
@@ -30,7 +32,7 @@ get_dotfiles(){
 
 }
 
-# Get aur packages (compile manually)
+# Get aur packages asynchronously
 get_aur_packages &
 disown
 
