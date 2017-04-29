@@ -70,7 +70,7 @@ install_base(){
 
 # Unmount and reboot
 finish(){
-	umount  -R /mnt
+	umount -R /mnt
 	swapoff /dev/ArchLinux/swapvol
 	reboot
 }
