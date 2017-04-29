@@ -39,19 +39,15 @@ install_x(){
 		modprobe -a vboxguest vboxsf vboxvideo
 	}
 
-	# Run when installing on personal computer
-	#x_for_thinkpad(){
-	#	sudo Xorg :0 -configure
-	#	sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
-	#}
-
 	pacman --noconfirm -S $PACKAGES1
 	pacman --noconfirm -S $PACKAGES2
 	pacman --noconfirm -S $PACKAGES3
 
-	#x_for_thinkpad
-	x_for_vbox
-
+	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null
+	if [[ $? -eq 0 ]]; then
+		x_for_vbox
+	fi
+	
 	echo "exec i3" > .xinitrc
 	[[ -f .Xauthority ]] && rm .Xauthority
 
