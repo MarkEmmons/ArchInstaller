@@ -26,22 +26,6 @@ create_admin(){
 
 }
 
-# Install 3rd party device driver for Thinkpad wifi-card
-install_firmware(){
-	
-	# Retrieve and unpackage tarball
-	mkdir packages
-	cd packages/
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
-	tar -xvf b43-firmware.tar.gz
-	
-	# Prompt user to build package manually for safety and consistency reasons
-	cd b43-firmware/
-	ls
-	echo "Verify PKGBUILD and run makepkg -si"
-	
-}
-
 # Install X Window System
 install_x(){
 	
@@ -120,10 +104,6 @@ case $1 in
 		echo "Running create_admin..."
 		create_admin
 		;;	
-	-f|--install-firmware)
-		echo "Running install_firmware..."
-		install_firmware
-		;;
 	-x|--install-x)
 		echo "Running install_x..."
 		install_x

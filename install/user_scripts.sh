@@ -3,15 +3,13 @@
 # Get aur packages (compile manually)
 get_aur_packages(){
 
-	cd $HOME
-
-	# Create packages directory if it does not already exist
-	if [[ ! -d "packages" ]]; then
-		mkdir packages
-	fi
-	cd packages
-
 	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	mkdir $HOME/packages
+	cd $HOME/packages
+	
+	# Get b43-firmware
+	wget https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
+	tar -xvf b43-firmware.tar.gz
 	
 	# Get Expressvpn
 	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
@@ -21,12 +19,12 @@ get_aur_packages(){
 	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
 	tar -xvf spotify.tar.gz
 	
+	cd $HOME
+
 }
 
 # Get dotfiles
 get_dotfiles(){
-
-	cd $HOME
 
 	# Retrieve dotfiles
 	rm -rf .xinitrc .zshrc
@@ -38,7 +36,6 @@ get_dotfiles(){
 	chmod a+x $HOME/dotfiles/bin/*
 
 }
-
 
 # Get aur packages (compile manually)
 get_aur_packages
