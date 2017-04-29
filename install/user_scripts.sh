@@ -3,21 +3,14 @@
 # Get aur packages (compile manually)
 get_aur_packages(){
 
+	AUR_PACKAGES=( https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
+	https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
+	https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz )
+
 	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
 	mkdir $HOME/packages
-	cd $HOME/packages
-	
-	# Get b43-firmware
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
-	tar -xvf b43-firmware.tar.gz
-	
-	# Get Expressvpn
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
-	tar -xvf expressvpn.tar.gz
-	
-	# Get Spotify
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
-	tar -xvf spotify.tar.gz
+	cd $HOME/packages && \
+	printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "curl {} | tar -xz"
 	
 	cd $HOME
 
@@ -38,7 +31,8 @@ get_dotfiles(){
 }
 
 # Get aur packages (compile manually)
-get_aur_packages
+get_aur_packages &
+disown
 
 # Get dotfiles
 get_dotfiles
