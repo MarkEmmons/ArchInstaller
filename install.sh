@@ -53,10 +53,13 @@ partition(){
 	
 # Update mirror list for faster install times
 update_mirrors(){
-	cp -vf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-	echo "Ranking mirrors, this may take a while..."
-	sed '/^#\S/ s|#||' -i /etc/pacman.d/mirrorlist.backup
-	rankmirrors -n 15 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+	#cp -vf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+	#sed '/^#\S/ s|#||' -i /etc/pacman.d/mirrorlist.backup
+	#rankmirrors -n 15 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+	echo "Ranking mirrors..."
+	wget https://raw.github.com/Gen2ly/armrr/master/armrr
+	chmod u+x armrr
+	./armrr US < mirror.txt
 }
 
 # Refresh mirrors and install the base system
@@ -78,6 +81,7 @@ echo "Preparing to install ArchLinux"
 echo
 
 wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
+wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 
 prepare
