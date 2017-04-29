@@ -50,3 +50,7 @@ chsh -s $(which zsh)
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
 mv build.sh /usr/sbin/build
 chmod a+x /usr/sbin/build
+
+wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
+mv user_scripts.sh /usr/bin/user_scripts
+chmod a+x /usr/bin/user_scripts
