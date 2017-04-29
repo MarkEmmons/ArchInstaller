@@ -91,7 +91,7 @@ update_mirrors
 install_base
 
 # Create fstab and chroot into the new system
-genfstab -U -p /mnt >> /etc/fstab
+genfstab -U -p /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash < chroot.sh
 
 finish
