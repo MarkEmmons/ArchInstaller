@@ -35,7 +35,7 @@ install_x(){
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		pacman -S virtualbox-guest-modules-arch virtualbox-guest-utils
+		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
 		modprobe -a vboxguest vboxsf vboxvideo
 	}
 
