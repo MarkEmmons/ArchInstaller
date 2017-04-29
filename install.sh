@@ -57,7 +57,7 @@ update_mirrors(){
 	#sed '/^#\S/ s|#||' -i /etc/pacman.d/mirrorlist.backup
 	#rankmirrors -n 15 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 	echo "Ranking mirrors..."
-	wget https://raw.github.com/Gen2ly/armrr/master/armrr
+	wget https://raw.github.com/MarkEmmons/armrr/master/armrr
 	chmod u+x armrr
 	./armrr US < mirror.txt
 }
