@@ -73,45 +73,6 @@ install_x(){
 
 }
 
-# Get aur packages (compile manually)
-get_aur_packages(){
-
-	cd $HOME
-
-	# Create packages directory if it does not already exist
-	if [[ ! -d "packages" ]]; then
-		mkdir packages
-	fi
-	cd packages
-
-	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
-	
-	# Get Expressvpn
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
-	tar -xvf expressvpn.tar.gz
-	
-	# Get Spotify
-	wget https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz
-	tar -xvf spotify.tar.gz
-	
-}
-
-# Get dotfiles
-get_dotfiles(){
-
-	cd $HOME
-
-	# Retrieve dotfiles
-	rm -rf .xinitrc .zshrc
-	git clone https://github.com/MarkEmmons/dotfiles.git
-
-	# Add dotfile scripts to path and make executable
-	export PATH=$PATH:$HOME/dotfiles/bin
-	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
-	chmod u+x $HOME/dotfiles/bin/*
-
-}
-
 # Install final miscellaneous packages and dotfiles. Must be run in X session
 build(){
 	
@@ -131,17 +92,7 @@ build(){
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	modprobe loop
 	pacman -S $VM_PACKAGES
-	groupadd docker
 	gpasswd -a $SUDO_USER docker
-
-	# Get aur packages (compile manually)
-	sudo -u $SUDO_USER get_aur_packages
-	
-	# Get dotfiles
-	sudo -u $SUDO_USER get_dotfiles
-	
-	# "Install" dotfiles
-	sudo -u $SUDO_USER dotfiles --install
 	
 	# Don't need this anymore
 	rm /usr/sbin/build
