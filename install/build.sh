@@ -27,7 +27,7 @@ create_admin(){
 }
 
 # Install 3rd party device driver for Thinkpad wifi-card
-install-firmware(){
+install_firmware(){
 	
 	# Retrieve and unpackage tarball
 	mkdir packages
@@ -61,9 +61,9 @@ install_x(){
 	#	sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
 	#}
 
-	pacman -S $PACKAGES1
-	pacman -S $PACKAGES2
-	pacman -S $PACKAGES3
+	pacman --noconfirm -S $PACKAGES1
+	pacman --noconfirm -S $PACKAGES2
+	pacman --noconfirm -S $PACKAGES3
 
 	#x_for_thinkpad
 	x_for_vbox
@@ -83,15 +83,15 @@ build(){
 	TOOL_PACKAGES="leafpad parallel scrot"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
-	pacman -S $DEV_PACKAGES
-	pacman -S $WEBDEV_PACKAGES
-	pacman -S $LANG_PACKAGES
-	pacman -S $TOOL_PACKAGES
+	pacman --noconfirm -S $DEV_PACKAGES
+	pacman --noconfirm -S $WEBDEV_PACKAGES
+	pacman --noconfirm -S $LANG_PACKAGES
+	pacman --noconfirm -S $TOOL_PACKAGES
 
 	# Configure docker, for more info consult the wiki
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	modprobe loop
-	pacman -S $VM_PACKAGES
+	pacman --noconfirm -S $VM_PACKAGES
 	gpasswd -a $SUDO_USER docker
 	
 	sudo -u $SUDO_USER user_scripts
