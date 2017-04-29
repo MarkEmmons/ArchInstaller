@@ -82,27 +82,28 @@ build(){
 	
 	# Install additional packages
 	DEV_PACKAGES="btrfs-progs ctags clang cmake net-tools"
-	#WEBDEV_PACKAGES="nodejs npm yarn mongodb mongodb-tools"
-	#LANG_PACKAGES="ruby rust valgrind"
-	#TOOL_PACKAGES="leafpad parallel scrot"
-	#VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
+	WEBDEV_PACKAGES="nodejs npm yarn mongodb mongodb-tools"
+	LANG_PACKAGES="ruby rust valgrind"
+	TOOL_PACKAGES="leafpad parallel scrot"
+	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman -S $DEV_PACKAGES
-	#pacman -S $WEBDEV_PACKAGES
-	#pacman -S $LANG_PACKAGES
-	#pacman -S $TOOL_PACKAGES
+	pacman -S $WEBDEV_PACKAGES
+	pacman -S $LANG_PACKAGES
+	pacman -S $TOOL_PACKAGES
 
 	# Configure docker, for more info consult the wiki
-	#tee /etc/modules-load.d/loop.conf <<< "loop"
-	#modprobe loop
-	#pacman -S $VM_PACKAGES
-	#gpasswd -a $SUDO_USER docker
+	tee /etc/modules-load.d/loop.conf <<< "loop"
+	modprobe loop
+	pacman -S $VM_PACKAGES
+	gpasswd -a $SUDO_USER docker
 	
 	sudo -u $SUDO_USER user_scripts
 	
-	# Don't need this anymore
+	# Don't need these anymore
 	rm /usr/sbin/build
-
+	rm /usr/bin/user_scripts
+	
 }
 
 # User must run build with root privileges
