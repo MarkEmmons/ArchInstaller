@@ -2,5 +2,5 @@ To run boot Arch installation disk and enter `wget https://raw.github.com/MarkEm
 	
 Standard Install Time: 42 min 34 sec
 ------------------------------------
-After Optimization: TBD
+After Optimization: 37 min 14 sec
 -----------------------
