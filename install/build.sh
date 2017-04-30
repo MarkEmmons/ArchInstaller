@@ -65,8 +65,8 @@ install_x(){
 build(){
 	
 	# Install additional packages
-	DEV_PACKAGES="python-pip gdb nodejs npm ctags clang cmake rust cargo"
-	WEBDEV_PACKAGES="yarn mongodb mongodb-tools leafpad"
+	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
+	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
 	LANG_PACKAGES="btrfs-progs ruby valgrind scrot"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 

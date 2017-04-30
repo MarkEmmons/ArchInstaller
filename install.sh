@@ -10,7 +10,8 @@ prepare(){
 	modprobe -a dm-mod dm_crypt
 
 	# Create partitions. /Instructions can be modified in disk.txt
-	gdisk /dev/sda < disk.txt
+	gdisk /dev/sda < disk.txt	
+	echo "y" > yes.txt
 }
 
 # Encrypt the lvm partition then un-encrypt for partitioning
@@ -40,7 +41,7 @@ partition(){
 	mkfs.btrfs /dev/mapper/ArchLinux-rootvol
 	mkfs.btrfs /dev/mapper/ArchLinux-homevol
 	mkfs.btrfs /dev/mapper/ArchLinux-pool
-	mkfs.ext4 /dev/sda2 < /dev/tty
+	mkfs.ext4 /dev/sda2 < yes.txt
 	mkswap /dev/mapper/ArchLinux-swapvol
 
 	# Mount the filesystems
