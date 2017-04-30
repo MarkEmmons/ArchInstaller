@@ -38,15 +38,23 @@ install_x(){
 		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
 		modprobe -a vboxguest vboxsf vboxvideo
 	}
+	
+	# Add more space to a non-virtual machine
+	phys_machine_resize(){
+		lvresize -L -120G ArchLinux/pool
+		lvresize -L +20G ArchLinux/rootvol
+		lvresize -L +100G ArchLinux/homevol
+	}
 
 	pacman --noconfirm -S $PACKAGES1
 	pacman --noconfirm -S $PACKAGES2
 	pacman --noconfirm -S $PACKAGES3
 
-	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null
-	if [[ $? -eq 0 ]]; then
-		x_for_vbox
-	fi
+	# Run only if this is a VirtualBox guest
+	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
+	
+	# Do not run if this is a VirtualBox guest
+	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null || phys_machine_resize
 	
 	echo "exec i3" > .xinitrc
 	[[ -f .Xauthority ]] && rm .Xauthority
@@ -57,25 +65,25 @@ install_x(){
 build(){
 	
 	# Install additional packages
-	DEV_PACKAGES="btrfs-progs ctags clang cmake net-tools"
-	WEBDEV_PACKAGES="nodejs npm yarn mongodb mongodb-tools"
-	LANG_PACKAGES="ruby rust valgrind"
-	TOOL_PACKAGES="leafpad parallel scrot"
+	DEV_PACKAGES="python-pip gdb nodejs npm ctags clang cmake rust cargo"
+	WEBDEV_PACKAGES="yarn mongodb mongodb-tools leafpad"
+	LANG_PACKAGES="btrfs-progs ruby valgrind scrot"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --noconfirm -S $DEV_PACKAGES
+
+	sudo -u $SUDO_USER user_scripts &
+	disown
+
 	pacman --noconfirm -S $WEBDEV_PACKAGES
 	pacman --noconfirm -S $LANG_PACKAGES
-	pacman --noconfirm -S $TOOL_PACKAGES
 
 	# Configure docker, for more info consult the wiki
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	modprobe loop
 	pacman --noconfirm -S $VM_PACKAGES
 	gpasswd -a $SUDO_USER docker
-	
-	sudo -u $SUDO_USER user_scripts
-	
+		
 	# Don't need these anymore
 	rm /usr/sbin/build
 	rm /usr/bin/user_scripts

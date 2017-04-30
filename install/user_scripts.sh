@@ -7,6 +7,8 @@ get_aur_packages(){
 
 	AUR_PACKAGES=( https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
 	https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
+	https://aur.archlinux.org/cgit/aur.git/snapshot/fzf-git.tar.gz
+	https://aur.archlinux.org/cgit/aur.git/snapshot/i3-gaps.tar.gz
 	https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz )
 
 	# Retrieve snapshots via parallel trickery
