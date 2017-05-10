@@ -1,3 +1,10 @@
+#!/bin/bash
+
+HOST=HOST_NAME_TO_BE
+ROOT=ROOT_PASS_TO_BE
+USER=USER_NAME_TO_BE
+PASS=USER_PASS_TO_BE
+
 # Generate locales
 sed 's|#en_US|en_US|' -i /etc/locale.gen
 locale-gen
@@ -15,19 +22,23 @@ ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 hwclock --systohc --utc
 
 # Add host
-HOST1="a"
-HOST2="b"
-while [ "$HOST1" != "$HOST2" ]; do
-	printf "Choose a host name: "
-	read HOST1 < /dev/tty
-	printf "Verify host name: "
-	read HOST2 < /dev/tty
-	if [ "$HOST1" != "$HOST2" ]; then
-		echo "Host name verification failed. Try again."
-	fi
-done
-echo "$HOST1" > /etc/hostname
-unset $HOST1; unset $HOST2
+#HOST1="a"
+#HOST2="b"
+#while [ "$HOST1" != "$HOST2" ]; do
+#	printf "Choose a host name: "
+#	read HOST1 < /dev/tty
+#	printf "Verify host name: "
+#	read HOST2 < /dev/tty
+#	if [ "$HOST1" != "$HOST2" ]; then
+#		echo "Host name verification failed. Try again."
+#	fi
+#done
+#echo "$HOST1" > /etc/hostname
+#unset $HOST1; unset $HOST2
+
+# Add host
+echo "$HOST" > /etc/hostname
+unset $HOST
 
 # Install Linux
 cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup
@@ -43,8 +54,18 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # Choose password for root and change default shell to zsh
 echo "Choose password for root: "
-passwd < /dev/tty
+#passwd < /dev/tty
+echo "root:$ROOT" | chpasswd
+unset $ROOT
 chsh -s $(which zsh)
+
+# Give new user root-privileges
+useradd -m -G wheel -s /bin/zsh $USER
+cp /root/.zshrc /home/$USER/.zshrc
+#passwd $USER
+echo "$USER:$PASS" | chpasswd
+unset $USER; unset $PASS
+sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
 
 # Download post-installation build scripts
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
