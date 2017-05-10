@@ -116,6 +116,7 @@ prepare(){
 
 # Encrypt the lvm partition then un-encrypt for partitioning
 encrypt(){
+	echo "Encrypting disk..."
 	echo -n "$crypt1" | \
 	cryptsetup -s 512 --key-file="-" luksFormat /dev/sda3
 	#cryptsetup -s 512 luksFormat /dev/sda3 < /dev/tty
