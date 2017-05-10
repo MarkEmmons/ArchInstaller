@@ -17,8 +17,11 @@ user=
 pass1=
 pass2=
 
-# Get all required user-information at the top
-get_user_inputs(){
+# Clean disk and enable encryption
+prepare(){
+	
+	# Manually clear disk for consistent results
+	#sgdisk --zap-all /dev/sda
 	
 	while [[ $RET_CODE -ne 1 && $RET_CODE -ne 250 ]]; do
     
@@ -83,7 +86,7 @@ get_user_inputs(){
 				sed "s|USER_PASS_TO_BE|\"$pass1\"|" -i chroot.sh
 				
 				unset host; unset root1; unset user; unset pass1
-				return
+				break
 			fi
 			;;
 		$DIALOG_ESC)
@@ -98,13 +101,6 @@ get_user_inputs(){
 			;;
 		esac
 	done
-}
-
-# Clean disk and enable encryption
-prepare(){
-	
-	# Manually clear disk for consistent results
-	#sgdisk --zap-all /dev/sda
 	
 	# Enable encryption module
 	modprobe -a dm-mod dm_crypt
@@ -180,8 +176,6 @@ finish(){
 	swapoff /dev/ArchLinux/swapvol
 	reboot
 }
-
-get_user_inputs
 
 clear
 
