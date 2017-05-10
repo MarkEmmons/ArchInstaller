@@ -17,11 +17,8 @@ user=
 pass1=
 pass2=
 
-# Clean disk and enable encryption
-prepare(){
-	
-	# Manually clear disk for consistent results
-	#sgdisk --zap-all /dev/sda
+# Get all required user-information at the top
+get_user_inputs(){
 	
 	while [[ $RET_CODE -ne 1 && $RET_CODE -ne 250 ]]; do
     
@@ -101,6 +98,13 @@ prepare(){
 			;;
 		esac
 	done
+}
+
+# Clean disk and enable encryption
+prepare(){
+	
+	# Manually clear disk for consistent results
+	#sgdisk --zap-all /dev/sda
 	
 	# Enable encryption module
 	modprobe -a dm-mod dm_crypt
@@ -175,6 +179,8 @@ finish(){
 	swapoff /dev/ArchLinux/swapvol
 	reboot
 }
+
+get_user_inputs
 
 clear
 
