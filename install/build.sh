@@ -31,7 +31,7 @@ install_x(){
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
-	PACKAGES3="xorg-server xorg-server-utils xorg-xinit xorg-xclock xorg-twm"
+	PACKAGES3="xorg-server xorg-server-utils xorg-xinit xorg-xclock xorg-twm xorg-xprop"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
@@ -67,7 +67,7 @@ build(){
 	# Install additional packages
 	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
 	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
-	LANG_PACKAGES="btrfs-progs ruby valgrind scrot"
+	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --noconfirm -S $DEV_PACKAGES
