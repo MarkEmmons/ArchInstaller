@@ -33,7 +33,6 @@ get_dotfiles(){
 
 	# Add dotfile scripts to path and make executable
 	export PATH=$PATH:$HOME/dotfiles/bin
-	mv $HOME/dotfiles/bin/dotfiles.sh $HOME/dotfiles/bin/dotfiles
 	chmod a+x $HOME/dotfiles/bin/*
 
 }
@@ -46,4 +45,4 @@ disown
 get_dotfiles
 
 # "Install" dotfiles
-dotfiles --install
+dot --install
