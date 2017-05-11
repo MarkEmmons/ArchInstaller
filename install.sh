@@ -29,7 +29,7 @@ prepare(){
 		set -f
 		exec 3>&1
 		
-		values=$(dialog --title "Arch Linux Installer" \
+		VALUES=$(dialog --title "Arch Linux Installer" \
 					--ok-label "Submit" \
 					--backtitle "Arch Linux" \
 					--colors \
@@ -46,7 +46,7 @@ prepare(){
 			"Retype Password:"          8 1 ""    8 25 25 0 1 \
 		2>&1 1>&3)
 		RET_CODE=$?
-		set $values
+		set $VALUES
 		CRYPT=$1 RE_CRYPT=$2 HOST=$3 ROOT=$4 RE_ROOT=$5 USER=$6 PASS=$7 RE_PASS=$8
 		
 		exec 3>&-
