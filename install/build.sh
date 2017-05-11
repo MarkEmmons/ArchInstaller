@@ -31,7 +31,7 @@ install_x(){
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
-	PACKAGES3="xorg-server xorg-server-utils xorg-xinit xorg-xclock xorg-twm xorg-xprop"
+	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
