@@ -52,7 +52,8 @@ build(){
 	pacman --noconfirm -S $DEV_PACKAGES
 
 	sudo -u $USER user_scripts &
-	disown
+	D_ID=$!
+	#disown
 
 	pacman --noconfirm -S $WEBDEV_PACKAGES
 	pacman --noconfirm -S $LANG_PACKAGES
@@ -65,6 +66,7 @@ build(){
 		
 	# Don't need these anymore
 	#rm /usr/sbin/build
+	wait $D_ID
 	rm /usr/bin/user_scripts
 	
 }
