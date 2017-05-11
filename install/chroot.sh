@@ -50,6 +50,8 @@ build(){
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --noconfirm -S $DEV_PACKAGES
+	
+	read -n 1
 
 	sudo -u $USER user_scripts &
 	D_ID=$!
