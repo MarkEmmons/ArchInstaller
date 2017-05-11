@@ -51,7 +51,7 @@ build(){
 
 	pacman --noconfirm -S $DEV_PACKAGES
 	
-	read -n 1
+	pacman -S gedit << /dev/tty
 
 	sudo -u $USER user_scripts &
 	D_ID=$!
