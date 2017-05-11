@@ -64,8 +64,9 @@ useradd -m -G wheel -s /bin/zsh $USER
 cp /root/.zshrc /home/$USER/.zshrc
 #passwd $USER
 echo "$USER:$PASS" | chpasswd
-unset $USER; unset $PASS
-sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
+unset $PASS
+sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER ALL=(ALL) ALL/" -i /etc/sudoers
+unset $USER
 
 # Download post-installation build scripts
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
