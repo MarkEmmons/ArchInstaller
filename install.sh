@@ -8,14 +8,14 @@ ERR_MESSAGE=""
 
 RET_CODE=0
 
-crypt1=
-crypt2=
-host=
-root1=
-root2=
-user=
-pass1=
-pass2=
+CRYPT=
+RE_CRYPT=
+HOST=
+ROOT=
+RE_ROOT=
+USER=
+PASS=
+RE_PASS=
 
 # Clean disk and enable encryption
 prepare(){
@@ -38,16 +38,16 @@ prepare(){
 		16 65 0 \
 			"Luks Passphrase:"          1 1 ""   1 25 30 0 1 \
 			"Retype Luks Passphrase:"   2 1 ""   2 25 30 0 1 \
-			"Hostname:"                 3 1 "$host"     3 25 20 0 0 \
+			"Hostname:"                 3 1 "$HOST"     3 25 20 0 0 \
 			"Root Password:"            4 1 ""    4 25 25 0 1 \
 			"Retype Root Password:"     5 1 ""    5 25 25 0 1 \
-			"Username:"                 6 1 "$user"     6 25 20 0 0 \
+			"Username:"                 6 1 "$USER"     6 25 20 0 0 \
 			"Password:"                 7 1 ""    7 25 25 0 1 \
 			"Retype Password:"          8 1 ""    8 25 25 0 1 \
 		2>&1 1>&3)
 		RET_CODE=$?
 		set $values
-		crypt1=$1 crypt2=$2 host=$3 root1=$4 root2=$5 user=$6 pass1=$7 pass2=$8
+		CRYPT=$1 RE_CRYPT=$2 HOST=$3 ROOT=$4 RE_ROOT=$5 USER=$6 PASS=$7 RE_PASS=$8
 		
 		exec 3>&-
 		set +f
@@ -70,22 +70,22 @@ prepare(){
 			esac
 			;;
 		$DIALOG_OK)
-			if [[ -z $crypt1 || -z $crypt2 || -z $host || -z $root1 || \
-				-z $root2 || -z $user || -z $pass1 || -z $pass2 ]]; then
+			if [[ -z $CRYPT || -z $RE_CRYPT || -z $HOST || -z $ROOT || \
+				-z $RE_ROOT || -z $USER || -z $PASS || -z $RE_PASS ]]; then
 				ERR_MESSAGE="\Z1(Fill all fields)"
-			elif [[ $crypt1 != $crypt2 || $root1 != $root2 || \
-				$pass1 != $pass2 ]]; then
+			elif [[ $CRYPT != $RE_CRYPT || $ROOT != $RE_ROOT || \
+				$PASS != $RE_PASS ]]; then
 				ERR_MESSAGE="\Z1(Two passwords do not match)"
 			else
 				clear
-				unset crypt2; unset root2;  unset pass2
+				unset RE_CRYPT; unset RE_ROOT;  unset RE_PASS
 				
-				sed "s|HOST_NAME_TO_BE|\"$host\"|" -i chroot.sh
-				sed "s|ROOT_PASS_TO_BE|\"$root1\"|" -i chroot.sh
-				sed "s|USER_NAME_TO_BE|\"$user\"|" -i chroot.sh
-				sed "s|USER_PASS_TO_BE|\"$pass1\"|" -i chroot.sh
+				sed "s|HOST_NAME_TO_BE|\"$HOST\"|" -i chroot.sh
+				sed "s|ROOT_PASS_TO_BE|\"$ROOT\"|" -i chroot.sh
+				sed "s|USER_NAME_TO_BE|\"$USER\"|" -i chroot.sh
+				sed "s|USER_PASS_TO_BE|\"$PASS\"|" -i chroot.sh
 				
-				unset host; unset root1; unset user; unset pass1
+				unset HOST; unset ROOT; unset USER; unset PASS
 				break
 			fi
 			;;
@@ -113,14 +113,14 @@ prepare(){
 # Encrypt the lvm partition then un-encrypt for partitioning
 encrypt(){
 	echo "Encrypting disk..."
-	echo -n "$crypt1" | \
+	echo -n "$CRYPT" | \
 	cryptsetup -s 512 --key-file="-" luksFormat /dev/sda3
 	#cryptsetup -s 512 luksFormat /dev/sda3 < /dev/tty
 	echo "Disk successfully encrypted."
 	echo "Unlocking disk..."
-	echo -n "$crypt1" | \
+	echo -n "$CRYPT" | \
 	cryptsetup --key-file="-" luksOpen /dev/sda3 lvm #< /dev/tty
-	unset crypt1
+	unset CRYPT
 	echo
 }
 
