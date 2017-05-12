@@ -1,66 +1,5 @@
 #!/bin/bash
 
-# Create a user with root-privileges
-create_admin(){
-
-	USER1="a"
-	USER2="b"
-
-	while [ "$USER1" != "$USER2" ]; do
-		printf "Choose a user name: "
-		read USER1
-		printf "Verify user name: "
-		read USER2
-		if [ "$USER1" != "$USER2" ]; then
-			echo "User name verification failed. Try again."
-		fi
-	done
-
-	# Give new user root-privileges
-	useradd -m -G wheel -s /bin/zsh $USER1
-	passwd $USER1
-	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER1 ALL=(ALL) ALL/" -i /etc/sudoers
-	
-	# Create placeholder zshrc to avoid unnecessary warnings
-	echo "# Placeholder" >> /home/$USER1/.zshrc
-
-}
-
-# Install X Window System
-install_x(){
-	
-	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
-	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
-	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop"
-
-	# Run when installing on VirtualBox
-	x_for_vbox(){
-		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
-		modprobe -a vboxguest vboxsf vboxvideo
-	}
-	
-	# Add more space to a non-virtual machine
-	phys_machine_resize(){
-		lvresize -L -120G ArchLinux/pool
-		lvresize -L +20G ArchLinux/rootvol
-		lvresize -L +100G ArchLinux/homevol
-	}
-
-	pacman --noconfirm -S $PACKAGES1
-	pacman --noconfirm -S $PACKAGES2
-	pacman --noconfirm -S $PACKAGES3
-
-	# Run only if this is a VirtualBox guest
-	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
-	
-	# Do not run if this is a VirtualBox guest
-	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null || phys_machine_resize
-	
-	echo "exec i3" > .xinitrc
-	[[ -f .Xauthority ]] && rm .Xauthority
-
-}
-
 # Install final miscellaneous packages and dotfiles. Must be run in X session
 build(){
 	
@@ -96,27 +35,5 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-# User must provide exactly one argument
-if [[ $# -ne 1 ]]; then
-	echo "error: expected exactly 1 argument got $#."
-	exit 1
-fi
-
-# Pick an installation step
-case $1 in
-	-c|--create-admin)
-		echo "Running create_admin..."
-		create_admin
-		;;	
-	-x|--install-x)
-		echo "Running install_x..."
-		install_x
-		;;
-	-b|--build)
-		echo "Running build..."
-		build
-		;;
-	*)
-		echo "ERROR: Unknown argument $key."
-		;;
-esac
+echo "Running build..."
+build
