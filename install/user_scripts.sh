@@ -19,9 +19,6 @@ get_aur_packages(){
 	mkdir $HOME/packages
 	cd $HOME/packages && \
 	printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "curl {} | tar -xz"
-	
-	cd $HOME
-
 }
 
 # Get dotfiles
@@ -35,14 +32,15 @@ get_dotfiles(){
 	export PATH=$PATH:$HOME/dotfiles/bin
 	chmod a+x $HOME/dotfiles/bin/*
 
+	# "Install" dotfiles
+	dot --install
 }
 
 # Get aur packages asynchronously
 get_aur_packages &
 disown
 
+cd $HOME
+
 # Get dotfiles
 get_dotfiles
-
-# "Install" dotfiles
-dot --install
