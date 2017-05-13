@@ -58,7 +58,7 @@ configure_users(){
 	echo "$USER:$PASS" | chpasswd
 	unset $PASS
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER ALL=(ALL) ALL/" -i /etc/sudoers
-	unset $USER
+	#unset $USER
 }
 
 # Install X Window System
