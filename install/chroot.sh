@@ -106,20 +106,20 @@ build(){
 
 	pacman --noconfirm -S $DEV_PACKAGES
 
-	sudo -u $SUDO_USER user_scripts &
+	sudo -u $USER user_scripts &
 	disown
 
 	pacman --noconfirm -S $WEBDEV_PACKAGES
 	pacman --noconfirm -S $LANG_PACKAGES
 
 	# Configure docker, for more info consult the wiki
+	pacman --noconfirm -S $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	modprobe loop
-	pacman --noconfirm -S $VM_PACKAGES
-	gpasswd -a $SUDO_USER docker
+	gpasswd -a $USER docker
 		
 	# Don't need these anymore
-	rm /usr/sbin/build
+	#rm /usr/sbin/build
 	rm /usr/bin/user_scripts
 	
 }
@@ -137,8 +137,6 @@ echo "Users configured."
 echo "Installing X..."
 install_x > /var/log/chroot/install_x.log 2>&1
 echo "X installed."
-echo "Attempting build..."
-build > /var/log/chroot/build.log 2>&1
 
 # Download post-installation build scripts
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
@@ -148,3 +146,6 @@ chmod a+x /usr/sbin/build
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
 mv user_scripts.sh /usr/bin/user_scripts
 chmod a+x /usr/bin/user_scripts
+
+echo "Attempting build..."
+build > /var/log/chroot/build.log 2>&1
