@@ -96,6 +96,34 @@ install_x(){
 
 }
 
+build(){
+	
+	# Install additional packages
+	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
+	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
+	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
+	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
+
+	pacman --noconfirm -S $DEV_PACKAGES
+
+	sudo -u $SUDO_USER user_scripts &
+	disown
+
+	pacman --noconfirm -S $WEBDEV_PACKAGES
+	pacman --noconfirm -S $LANG_PACKAGES
+
+	# Configure docker, for more info consult the wiki
+	tee /etc/modules-load.d/loop.conf <<< "loop"
+	modprobe loop
+	pacman --noconfirm -S $VM_PACKAGES
+	gpasswd -a $SUDO_USER docker
+		
+	# Don't need these anymore
+	rm /usr/sbin/build
+	rm /usr/bin/user_scripts
+	
+}
+
 # Main
 echo "I am Chroot!"
 mkdir /var/log/chroot
@@ -109,6 +137,8 @@ echo "Users configured."
 echo "Installing X..."
 install_x > /var/log/chroot/install_x.log 2>&1
 echo "X installed."
+echo "Attempting build..."
+build > /var/log/chroot/build.log 2>&1
 
 # Download post-installation build scripts
 wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
