@@ -34,6 +34,7 @@ get_dotfiles(){
 
 	# "Install" dotfiles
 	dot --install
+	date
 }
 
 # Get aur packages asynchronously

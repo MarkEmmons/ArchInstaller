@@ -106,9 +106,13 @@ build(){
 
 	pacman --noconfirm -S $DEV_PACKAGES
 
-	sudo -u $USER user_scripts &
-	disown
+	# Add a wait script and log results separately
+	sudo -u $USER user_scripts > /var/log/chroot/build.log 2>&1 &
+	PID=$!
+	#disown
 
+	# Get feh to work without starting X
+	
 	pacman --noconfirm -S $WEBDEV_PACKAGES
 	pacman --noconfirm -S $LANG_PACKAGES
 
@@ -120,6 +124,11 @@ build(){
 		
 	# Don't need these anymore
 	#rm /usr/sbin/build
+	echo "Waiting on user scripts"
+	date
+	wait $PID
+	echo "We're done!"
+	date
 	rm /usr/bin/user_scripts
 	
 }
