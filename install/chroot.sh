@@ -71,7 +71,7 @@ install_x(){
 	# Run when installing on VirtualBox
 	x_for_vbox(){
 		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
-		modprobe -a vboxguest vboxsf vboxvideo
+		#modprobe -a vboxguest vboxsf vboxvideo
 	}
 	
 	# Add more space to a non-virtual machine
@@ -97,6 +97,11 @@ install_x(){
 }
 
 build(){
+
+	# Fetch scripts to be run by $USER
+	wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
+	mv user_scripts.sh /usr/bin/user_scripts
+	chmod a+x /usr/bin/user_scripts
 	
 	# Install additional packages
 	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
@@ -119,7 +124,7 @@ build(){
 	# Configure docker, for more info consult the wiki
 	pacman --noconfirm -S $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
-	modprobe loop
+	#modprobe loop
 	gpasswd -a $USER docker
 		
 	# Don't need these anymore
@@ -136,6 +141,7 @@ build(){
 # Main
 echo "I am Chroot!"
 mkdir /var/log/chroot
+mv /var/log/time.log /var/log/chroot/time.log
 
 echo "Installing Linux..."
 install_linux > /var/log/chroot/install_linux.log 2>&1
@@ -147,14 +153,10 @@ echo "Installing X..."
 install_x > /var/log/chroot/install_x.log 2>&1
 echo "X installed."
 
-# Download post-installation build scripts
-wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
-mv build.sh /usr/sbin/build
-chmod a+x /usr/sbin/build
-
-wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
-mv user_scripts.sh /usr/bin/user_scripts
-chmod a+x /usr/bin/user_scripts
-
 echo "Attempting build..."
 build > /var/log/chroot/build.log 2>&1
+# Download post-installation build scripts
+#wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
+#mv build.sh /usr/sbin/build
+#chmod a+x /usr/sbin/build
+date >> /var/log/chroot/time.log

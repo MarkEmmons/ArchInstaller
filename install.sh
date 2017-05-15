@@ -102,6 +102,9 @@ prepare(){
 		esac
 	done
 	
+	# Echo start time
+	date > time.log
+	
 	# Enable encryption module
 	modprobe -a dm-mod dm_crypt
 
@@ -194,6 +197,7 @@ install_base
 
 # Create fstab and chroot into the new system
 cp .zshrc /mnt/root/.zshrc
+mv time.log /mnt/var/log/time.log
 genfstab -U -p /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash < chroot.sh
 
