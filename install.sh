@@ -20,8 +20,15 @@ RE_PASS=
 # Clean disk and enable encryption
 prepare(){
 	
-	# Manually clear disk for consistent results
-	#sgdisk --zap-all /dev/sda
+	# Fetch some extra stuff
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/localtime
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
+
+	# Set time for time-keeping
+	rm /etc/localtime
+	mv localtime /etc/localtime
 	
 	while [[ $RET_CODE -ne 1 && $RET_CODE -ne 250 ]]; do
     
@@ -173,6 +180,16 @@ install_base(){
 	pacstrap /mnt base base-devel grub-bios
 }
 
+# Create fstab and chroot into the new system
+chroot_mnt(){
+	cp .zshrc /mnt/root/.zshrc
+	mkdir /mnt/var/log/install
+	mv *.log /mnt/var/log/install
+
+	genfstab -U -p /mnt >> /mnt/etc/fstab
+	arch-chroot /mnt /bin/bash < chroot.sh
+}
+
 # Unmount and reboot
 finish(){
 	umount -R /mnt
@@ -185,20 +202,10 @@ clear
 echo "Preparing to install ArchLinux"
 echo
 
-wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
-wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
-wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
-
 prepare
 encrypt
 partition
 update_mirrors
 install_base
-
-# Create fstab and chroot into the new system
-cp .zshrc /mnt/root/.zshrc
-mv time.log /mnt/var/log/time.log
-genfstab -U -p /mnt >> /mnt/etc/fstab
-arch-chroot /mnt /bin/bash < chroot.sh
-
+chroot_mnt
 finish
