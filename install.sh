@@ -288,7 +288,7 @@ clear
 echo "Preparing to install ArchLinux"
 echo
 
-prepare >prepare.log 3>&2 2>&1
+prepare
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
