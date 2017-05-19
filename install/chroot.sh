@@ -165,7 +165,7 @@ build(){
 		percent 30
 
 	# Add a wait script and log results separately
-	sudo -u $USER user_scripts > /var/log/chroot/user_scripts.log 2>&1 &
+	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
 		percent 40
 	#disown
