@@ -17,8 +17,6 @@ USER=
 PASS=
 RE_PASS=
 
-source bar.sh
-
 # Clean disk and enable encryption
 prepare(){
 	
@@ -289,6 +287,9 @@ echo "Preparing to install ArchLinux"
 echo
 
 prepare
+
+source bar.sh
+
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
