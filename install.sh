@@ -22,6 +22,7 @@ prepare(){
 	
 	# Fetch some extra stuff
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/bar.sh
 
@@ -238,10 +239,7 @@ update_mirrors(){
 		percent 50
 	chmod u+x armrr
 		percent 75
-	./armrr US <<EOL 
-	n
-	y
-	EOL
+	./armrr US < mirror.txt
 		percent 100
 	wait $BAR_ID
 }
