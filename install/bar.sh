@@ -108,6 +108,10 @@ S=
 SPINNER=('/' '-' '\' '|')
 COLS=$(tput cols)
 
+percent(){
+	echo "$1" > /tmp/bar.txt
+}
+
 status_bar(){
 
     COMPLETED=$(cat /tmp/bar.txt)

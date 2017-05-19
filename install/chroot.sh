@@ -21,7 +21,7 @@ install_linux(){
 
 	# Configure clock
 	[[ -f /etc/localtime ]] && rm /etc/localtime
-	ln -s /usr/share/zoneinfo/US/Central /etc/localtime 
+	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 	hwclock --systohc --utc
 
 	# Add host
