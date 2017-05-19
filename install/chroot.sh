@@ -203,9 +203,16 @@ build(){
 
 # Main
 mkdir /var/log/install/chroot
+echo "$PWD"
+wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/bar.sh
 
+source bar.sh
+
+echo "Running Chroot"
 install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
+echo "Installed Linux"
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
+echo "Configured users"
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
 build > /var/log/install/chroot/build.log 3>&2 2>&1
 
