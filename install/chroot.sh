@@ -140,23 +140,23 @@ build(){
 
 # Main
 echo "I am Chroot!"
-mkdir /var/log/chroot
+mkdir /var/log/install/chroot
 mv /var/log/time.log /var/log/chroot/time.log
 
 echo "Installing Linux..."
-install_linux > /var/log/chroot/install_linux.log 2>&1
+install_linux > /var/log/install/chroot/install_linux.log 2>&1
 echo "Linux installed."
 echo "Configuring users..."
-configure_users > /var/log/chroot/configure_users.log 2>&1
+configure_users > /var/log/install/chroot/configure_users.log 2>&1
 echo "Users configured."
 echo "Installing X..."
-install_x > /var/log/chroot/install_x.log 2>&1
+install_x > /var/log/install/chroot/install_x.log 2>&1
 echo "X installed."
 
 echo "Attempting build..."
-build > /var/log/chroot/build.log 2>&1
+build > /var/log/install/chroot/build.log 2>&1
 # Download post-installation build scripts
 #wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/build.sh
 #mv build.sh /usr/sbin/build
 #chmod a+x /usr/sbin/build
-date >> /var/log/chroot/time.log
+date >> /var/log/install/time.log

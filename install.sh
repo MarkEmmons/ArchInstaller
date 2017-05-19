@@ -278,19 +278,25 @@ chroot_mnt(){
 finish(){
 	umount -R /mnt
 	swapoff /dev/ArchLinux/swapvol
+	tput cnorm
 	reboot
 }
 
+tput civis
 clear
 
 echo "Preparing to install ArchLinux"
 echo
 
-prepare
-begin
-encrypt
-partition
-update_mirrors
-install_base
+prepare >prepare.log 3>&2 2>&1
+begin >begin.log 3>&2 2>&1
+encrypt >encrypt.log 3>&2 2>&1
+partition >partition.log 3>&2 2>&1
+update_mirrors >update_mirrors.log 3>&2 2>&1
+install_base >install_base.log 3>&2 2>&1
 chroot_mnt
 finish
+
+
+heresafunction >test1.log 3>&2 2>&1
+newfunction >test2.log 3>&2 2>&1
