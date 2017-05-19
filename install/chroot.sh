@@ -204,7 +204,6 @@ build(){
 # Main
 mkdir /var/log/install/chroot
 echo "$PWD"
-wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/bar.sh
 
 source bar.sh
 

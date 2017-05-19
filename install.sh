@@ -264,7 +264,7 @@ install_base(){
 # Create fstab and chroot into the new system
 chroot_mnt(){
 	
-	#cp bar.sh /mnt/root/bar.sh
+	cp bar.sh /mnt/bar.sh
 	cp .zshrc /mnt/root/.zshrc
 	mkdir /mnt/var/log/install
 	mv *.log /mnt/var/log/install
