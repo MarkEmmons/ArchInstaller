@@ -26,6 +26,9 @@ prepare(){
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/bar.sh
 
+	# Dissalow screen blanking for installation
+	setterm -blank 0
+	
 	# Set time for time-keeping
 	rm /etc/localtime
 	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
