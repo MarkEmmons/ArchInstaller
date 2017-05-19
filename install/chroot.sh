@@ -8,29 +8,29 @@ PASS=USER_PASS_TO_BE
 # Normal chroot stuff
 install_linux(){
 
+	# Configure clock. This step must happen before the bar is initialized or the timing will be off
+	[[ -f /etc/localtime ]] && rm /etc/localtime
+	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
+	hwclock --systohc --utc
+
+		percent 0
 	# Initialize status bar
     status_bar "Installing Linux" &
     BAR_ID=$!
 	
-		percent 0
+		percent 10
 	# Generate locales
 	sed 's|#en_US|en_US|' -i /etc/locale.gen
 	locale-gen
 
-		percent 10
+		percent 20
 	# Export locales
 	echo "LANG=en_US.UTF-8" > /etc/locale.conf
 	export LANG=en_US.UTF-8
 
-		percent 20
+		percent 30
 	# Remove when moving from VirtualBox
 	systemctl enable dhcpcd.service
-
-		percent 30
-	# Configure clock
-	[[ -f /etc/localtime ]] && rm /etc/localtime
-	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
-	hwclock --systohc --utc
 
 		percent 40
 	# Add host
