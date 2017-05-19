@@ -9,7 +9,6 @@ PASS=USER_PASS_TO_BE
 install_linux(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Installing Linux" &
     BAR_ID=$!
 	
@@ -64,7 +63,6 @@ install_linux(){
 configure_users(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Configuring users" &
     BAR_ID=$!
 	
@@ -94,7 +92,6 @@ configure_users(){
 install_x(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Installing Xorg" &
     BAR_ID=$!
 	
@@ -143,7 +140,6 @@ install_x(){
 build(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Building extras" &
     BAR_ID=$!
 	

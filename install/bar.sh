@@ -111,6 +111,8 @@ percent(){
 
 status_bar(){
 
+    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
+	
     COMPLETED=$(cat /tmp/bar.txt)
     FUN_NAME=
     i=0

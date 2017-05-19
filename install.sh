@@ -120,7 +120,6 @@ prepare(){
 begin(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Getting started" &
     BAR_ID=$!
 
@@ -142,7 +141,6 @@ begin(){
 encrypt(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Encrypting disk" &
     BAR_ID=$!
 	
@@ -171,7 +169,6 @@ encrypt(){
 partition(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Partitioning" &
     BAR_ID=$!
 	
@@ -228,7 +225,6 @@ partition(){
 update_mirrors(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Updating mirror list" &
     BAR_ID=$!
 	
@@ -251,7 +247,6 @@ update_mirrors(){
 install_base(){
 
 	# Initialize status bar
-    START_TIME=$( date | sed -e 's|:| |g' | awk '{print ((($4*60)+$5)*60) + $6}' )
     status_bar "Installing base system" &
     BAR_ID=$!
 	
