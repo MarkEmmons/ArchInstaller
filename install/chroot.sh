@@ -36,7 +36,7 @@ install_linux(){
 	hwclock --systohc --utc
 
 	# Initialize progress bar
-    progress_bar "Installing Linux" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    progress_bar " Installing Linux" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
 	# Generate locales
@@ -82,7 +82,7 @@ configure_users(){
 	"New user created" )
 
 	# Initialize progress bar
-    progress_bar "Configuring users" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    progress_bar " Configuring users" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
 	# Choose password for root and change default shell to zsh
@@ -161,7 +161,7 @@ install_x(){
     "installing xorg-xprop")
 
 	# Initialize progress bar
-    progress_bar "Installing Xorg" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    progress_bar " Installing Xorg" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
@@ -244,7 +244,7 @@ build(){
     "We're done")
 
 	# Initialize progress bar
-    progress_bar "Building extras" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    progress_bar " Building extras" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
 	# Fetch scripts to be run by $USER

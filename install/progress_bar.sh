@@ -212,7 +212,7 @@ progress_bar(){
             tput sgr0 \
             ;} >&3
 
-        SPIN=$((($SPIN + 1) % 3))
+        SPIN=$((($SPIN + 1) % 4))
         sleep 0.15
     done
 
