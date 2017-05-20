@@ -8,106 +8,172 @@ PASS=USER_PASS_TO_BE
 # Normal chroot stuff
 install_linux(){
 
+    STAT_ARRAY=( "Generating locales"
+    "Created symlink"
+    "downloading libedit"
+    "downloading openssh"
+    "downloading wpa_supplicant"
+    "downloading wget"
+    "downloading vim-runtime"
+    "downloading git"
+    "downloading parallel"
+    "Processing package changes"
+    "installing wget"
+    "installing libedit"
+    "installing openssh"
+    "installing parallel"
+    "installing wpa_supplicant"
+    "installing vim-runtime"
+    "installing git"
+    "Running post-transaction hooks"
+    "Installing for i386-pc platform"
+    "Generating grub configuration file"
+    "Found linux image: /boot/vmlinuz-linux" )
+
 	# Configure clock. This step must happen before the bar is initialized or the timing will be off
 	[[ -f /etc/localtime ]] && rm /etc/localtime
 	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 	hwclock --systohc --utc
 
-		percent 0
-	# Initialize status bar
-    status_bar "Installing Linux" &
+	# Initialize progress bar
+    progress_bar "Installing Linux" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 10
 	# Generate locales
 	sed 's|#en_US|en_US|' -i /etc/locale.gen
 	locale-gen
 
-		percent 20
 	# Export locales
 	echo "LANG=en_US.UTF-8" > /etc/locale.conf
 	export LANG=en_US.UTF-8
 
-		percent 30
 	# Remove when moving from VirtualBox
 	systemctl enable dhcpcd.service
 
-		percent 40
 	# Add host
 	echo "$HOST" > /etc/hostname
 	unset $HOST
 
-		percent 50
 	# Install Linux
 	cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup
 	sed 's|MODULES=\"\"|MODULES=\"btrfs\"|' -i /etc/mkinitcpio.conf
 	grep "^[^#;]" /etc/mkinitcpio.conf | grep "HOOKS=" | sed 's|filesystems|encrypt lvm2 filesystems|' -i /etc/mkinitcpio.conf
-		percent 60
 	mkinitcpio -p linux
 
-		percent 70
 	# Install and configure grub
 	pacman --noconfirm -S grub wget curl openssh parallel zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux < /dev/tty
-		percent 75
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
-		percent 80
 	grub-install --target=i386-pc --recheck /dev/sda
-		percent 90
 	grub-mkconfig -o /boot/grub/grub.cfg
 	
-		percent 100
 	wait $BAR_ID
 }
 
 # Create user and add some passwords
 configure_users(){
 
-	# Initialize status bar
-    status_bar "Configuring users" &
+    STAT_ARRAY=( "Setting root password"
+	"Root password set"
+	"Changing shell for root"
+    "Shell changed"
+	"Adding new user"
+	"Setting user password"
+	"Adding user to sudoers"
+	"New user created" )
+
+	# Initialize progress bar
+    progress_bar "Configuring users" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
 	# Choose password for root and change default shell to zsh
+	echo "Setting root password..."
 	echo "root:$ROOT" | chpasswd
 	unset $ROOT
+	echo "Root password set."
 	chsh -s $(which zsh)
 
-		percent 15
 	# Give new user root-privileges
+	echo "Adding new user..."
 	useradd -m -G wheel -s /bin/zsh $USER
-		percent 30
 	cp /root/.zshrc /home/$USER/.zshrc
-		percent 50
+	echo "Setting user password..."
 	echo "$USER:$PASS" | chpasswd
-		percent 75
 	unset $PASS
-		percent 90
+	echo "Adding user to sudoers..."
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER ALL=(ALL) ALL/" -i /etc/sudoers
+	echo "New user created."
 	
-		percent 100
 	wait $BAR_ID
 }
 
 # Install X Window System
 install_x(){
 
-	# Initialize status bar
-    status_bar "Installing Xorg" &
+    STAT_ARRAY=("downloading wayland"
+    "downloading xextproto"
+    "downloading damageproto"
+    "downloading mesa"
+    "downloading xf86-video-fbdev"
+    "downloading alsa-lib"
+    "downloading flac"
+    "downloading alsa-utils"
+    "installing wayland"
+    "installing xextproto"
+    "installing damageproto"
+    "installing mesa"
+    "installing xf86-video-fbdev"
+    "installing alsa-lib"
+    "installing flac"
+    "installing alsa-utils"
+    "downloading wireless_tools"
+    "downloading cairo"
+    "downloading lua"
+    "downloading conky"
+    "downloading xterm-32"
+    "downloading chromium"
+    "downloading i3-wm"
+    "downloading dmenu"
+    "downloading stow"
+    "downloading xbindkeys"
+    "installing cairo"
+    "installing i3-wm"
+    "installing wireless_tools"
+    "installing dmenu"
+    "installing lua"
+    "installing conky"
+    "installing xterm"
+    "installing chromium"
+    "installing stow"
+    "installing xbindkeys"
+    "downloading fontsproto"
+    "downloading xorg-fonts-encodings"
+    "downloading xorg-font-utils"
+    "downloading xorg-server-common"
+    "downloading xorg-xinit"
+    "downloading xorg-xclock"
+    "downloading xorg-xprop"
+    "installing fontsproto"
+    "installing xorg-fonts-encodings"
+    "installing xorg-font-utils"
+    "installing xorg-server-common"
+    "installing xorg-xinit"
+    "installing xorg-xclock"
+    "installing xorg-xprop")
+
+	# Initialize progress bar
+    progress_bar "Installing Xorg" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
 	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop"
 
-		percent 5
 	# Run when installing on VirtualBox
 	x_for_vbox(){
 		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
 		#modprobe -a vboxguest vboxsf vboxvideo
 	}
 	
-		percent 10
 	# Add more space to a non-virtual machine
 	phys_machine_resize(){
 		lvresize -L -120G ArchLinux/pool
@@ -116,40 +182,75 @@ install_x(){
 	}
 
 	pacman --noconfirm -S $PACKAGES1
-		percent 30
 	pacman --noconfirm -S $PACKAGES2
-		percent 50
 	pacman --noconfirm -S $PACKAGES3
-		percent 70
 
 	# Run only if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
 	
 	# Do not run if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null || phys_machine_resize
-		percent 90
 	
 	echo "exec i3" > /home/$USER/.xinitrc
-		percent 95
 	[[ -f /home/$USER/.Xauthority ]] && rm /home/$USER/.Xauthority
 
-		percent 100
 	wait $BAR_ID
 }
 
 build(){
 
-	# Initialize status bar
-    status_bar "Building extras" &
+    STAT_ARRAY=("downloading openssl"
+    "downloading cmake"
+    "downloading http-parser"
+    "downloading nodejs"
+    "downloading cargo"
+    "installing openssl"
+    "installing http-parser"
+    "installing nodejs"
+    "installing cmake"
+    "installing cargo"
+    "downloading python-pyparsing"
+    "downloading python-setuptools"
+    "downloading gdb-common"
+    "downloading leafpad"
+    "downloading yarn"
+    "downloading mongodb-tools"
+    "installing python-pyparsing"
+    "installing python-setuptools"
+    "installing gdb-common"
+    "installing yarn"
+    "installing mongodb-tools"
+    "installing leafpad"
+    "downloading btrfs-progs"
+    "downloading valgrind"
+    "downloading htop"
+    "downloading scrot"
+    "downloading ncmpcpp"
+    "installing btrfs-progs"
+    "installing valgrind"
+    "installing scrot"
+    "installing ncmpcpp"
+    "installing htop"
+    "downloading sdl"
+    "downloading libproxy"
+    "downloading docker-machine"
+    "downloading virtualbox-host"
+    "installing docker-machine"
+    "installing sdl"
+    "installing libproxy"
+    "installing virtualbox-host"
+    "loop"
+    "Waiting on user scripts"
+    "We're done")
+
+	# Initialize progress bar
+    progress_bar "Building extras" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
 	# Fetch scripts to be run by $USER
 	wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
-		percent 10
 	mv user_scripts.sh /usr/bin/user_scripts
 	chmod a+x /usr/bin/user_scripts
-		percent 20
 	
 	# Install additional packages
 	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
@@ -158,30 +259,23 @@ build(){
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --noconfirm -S $DEV_PACKAGES
-		percent 30
 
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
-		percent 40
 	#disown
 
 	# Get feh to work without starting X
 	
 	pacman --noconfirm -S $WEBDEV_PACKAGES
-		percent 50
 	pacman --noconfirm -S $LANG_PACKAGES
-		percent 60
 
 	# Configure docker, for more info consult the wiki
 	pacman --noconfirm -S $VM_PACKAGES
-		percent 70
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	#modprobe loop
-		percent 80
 	gpasswd -a $USER docker
 
-		percent 90
 	# Wait for user scripts to finish
 	echo "Waiting on user scripts"
 	date
@@ -189,17 +283,15 @@ build(){
 	echo "We're done!"
 	date
 
-		percent 95
 	# Don't need these anymore
 	rm /usr/bin/user_scripts
 	
-		percent 100
 	wait $BAR_ID
 }
 
 # Main
 mkdir /var/log/install/chroot
-source bar.sh
+source progress_bar.sh
 
 install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
@@ -207,3 +299,4 @@ install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
 build > /var/log/install/chroot/build.log 3>&2 2>&1
 
 date >> /var/log/install/time.log
+rm progress_bar.sh

@@ -24,7 +24,7 @@ prepare(){
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/bar.sh
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
 
 	# Dissalow screen blanking for installation
 	setterm -blank 0
@@ -119,48 +119,52 @@ prepare(){
 
 begin(){
 
-	# Initialize status bar
-    status_bar "Getting started" &
+    STAT_ARRAY=( "GPT fdisk (gdisk) version 1.0.1"
+    "Partition table scan:"
+    "Found valid GPT with protective MBR; using GPT."
+    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'BIOS boot partition'"
+    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'Linux filesystem'"
+    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'Linux LVM'"
+    "Command (? for help):"
+    "Final checks complete. About to write GPT data. THIS WILL OVERWRITE EXISTING"
+    "OK; writing new GUID partition table (GPT) to"
+    "The operation has completed successfully." )
+
+	# Initialize progress bar
+    progress_bar " Getting started" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 
-		percent 0
-	
 	# Enable encryption module
 	modprobe -a dm-mod dm_crypt
 	
-		percent 25
-
 	# Create partitions. Instructions can be modified in disk.txt
 	gdisk /dev/sda < disk.txt
 	
-		percent 100
 	wait $BAR_ID
 }
 
 # Encrypt the lvm partition then un-encrypt for partitioning
 encrypt(){
 
-	# Initialize status bar
-    status_bar "Encrypting disk" &
+    STAT_ARRAY=( "Encrypting disk"
+    "Disk successfully encrypted"
+    "Unlocking disk"
+	"Disk successfully unlocked" )
+
+	# Initialize progress bar
+    progress_bar " Encrypting disk" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
-	
 	echo "Encrypting disk..."
-		percent 10
-
 	echo -n "$CRYPT" | \
 	cryptsetup -s 512 --key-file="-" luksFormat /dev/sda3
-		percent 45
 
 	echo "Disk successfully encrypted."
-		percent 65
 	echo "Unlocking disk..."
-		percent 85
 	echo -n "$CRYPT" | \
 	cryptsetup --key-file="-" luksOpen /dev/sda3 lvm #< /dev/tty
-		percent 100
 	unset CRYPT
+	echo "Disk successfully unlocked."
 	echo
 	wait $BAR_ID
 }
@@ -168,101 +172,130 @@ encrypt(){
 # Partition
 partition(){
 
-	# Initialize status bar
-    status_bar "Partitioning" &
+    STAT_ARRAY=( "Physical volume \"/dev/mapper/lvm\" successfully created."
+    "Logical volume \"homevol\" created."
+    "/dev/mapper/ArchLinux-rootvol"
+    "/dev/mapper/ArchLinux-homevol"
+    "/dev/mapper/ArchLinux-pool"
+    "Creating filesystem with"
+    "Allocating group tables:"
+    "Setting up swapspace version" )
+
+	# Initialize progress bar
+    progress_bar " Partitioning" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
-		percent 0
 	
 	# Create a physical volume on top of the opened LUKS container
 	pvcreate /dev/mapper/lvm
-		percent 10
 
 	# Create the volume group ArchLinux, adding the previously created physical volume to it
 	vgcreate ArchLinux /dev/mapper/lvm
-		percent 20
 	
 	# Create all of the logical volumes on the volume group
 	lvcreate -L 10G ArchLinux -n rootvol
-		percent 25
 	lvcreate -L 2G ArchLinux -n swapvol
-		percent 30
 	lvcreate -L 20G ArchLinux -n homevol
-		percent 35
 	lvcreate -l +100%FREE ArchLinux -n pool
-		percent 40
 
 	# Format the filesystems on each logical volume
-		percent 45
 	mkfs.btrfs /dev/mapper/ArchLinux-rootvol
-		percent 50
 	mkfs.btrfs /dev/mapper/ArchLinux-homevol
-		percent 55
 	mkfs.btrfs /dev/mapper/ArchLinux-pool
-		percent 60
 	mkfs.ext4 /dev/sda2 <<< "y"
-		percent 65
 	mkswap /dev/mapper/ArchLinux-swapvol
-		percent 70
 
 	# Mount the filesystems
-		percent 75
 	mount /dev/ArchLinux/rootvol /mnt
-		percent 80
 	mkdir /mnt/home /mnt/boot
-		percent 85
 	mount /dev/ArchLinux/homevol /mnt/home
-		percent 90
 	mount /dev/sda2 /mnt/boot
-		percent 95
 	swapon /dev/ArchLinux/swapvol
 	
-		percent 100
 	wait $BAR_ID
 }
 	
 # Update mirror list for faster install times
 update_mirrors(){
 
-	# Initialize status bar
-    status_bar "Updating mirror list" &
+	STAT_ARRAY=( "Ranking mirrors..."
+	"Got armrr"
+	"Running armrr..."
+	"Got new mirror list" )
+
+	# Initialize progress bar
+    progress_bar " Updating mirror list" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
 	#cp -vf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 	#sed '/^#\S/ s|#||' -i /etc/pacman.d/mirrorlist.backup
 	#rankmirrors -n 15 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 	echo "Ranking mirrors..."
-		percent 25
 	wget https://raw.github.com/MarkEmmons/armrr/master/armrr
-		percent 50
+	echo "Got armrr"
 	chmod u+x armrr
-		percent 75
+	echo "Running armrr..."
 	./armrr US < mirror.txt
-		percent 100
+	echo "Got new mirror list"
 	wait $BAR_ID
 }
 
 # Refresh mirrors and install the base system
 install_base(){
 
-	# Initialize status bar
-    status_bar "Installing base system" &
+    STAT_ARRAY=( "There are 50 members in group base:"
+    "downloading gcc-libs"
+    "downloading bash"
+    "downloading cracklib"
+    "downloading dhcpcd"
+    "downloading grep"
+    "downloading linux-firmware"
+    "downloading mkinitcpio-busybox"
+    "downloading man-db"
+    "downloading curl"
+    "downloading pacman-mirrorlist"
+    "downloading tar"
+    "downloading fakeroot"
+    "downloading make"
+    "downloading sudo"
+    "downloading guile"
+    "Processing package changes..."
+    "installing gcc-libs"
+    "installing bash"
+    "installing cracklib"
+    "installing dhcpcd"
+    "installing grep"
+    "installing linux-firmware"
+    "installing mkinitcpio-busybox"
+    "installing man-db"
+    "installing curl"
+    "installing pacman-mirrorlist"
+    "installing tar"
+    "installing fakeroot"
+    "installing make"
+    "installing sudo"
+    "installing guile"
+    "Generating grub.cfg.example config file..."
+    "Running post-transaction hooks..."
+    "Updating udev hardware database..."
+    "Updating system user accounts..."
+    "Creating temporary files..."
+    "Arming ConditionNeedsUpdate..."
+    "Updating the info directory file..."
+    "Rebuilding certificate stores..." )
+
+	# Initialize progress bar
+    progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
-		percent 0
-		percent 33
 	pacman -Syy
-		percent 67
 	pacstrap /mnt base base-devel grub-bios
-		percent 100
 	wait $BAR_ID
 }
 
 # Create fstab and chroot into the new system
 chroot_mnt(){
 	
-	cp bar.sh /mnt/bar.sh
+	cp progress_bar.sh /mnt/progress_bar.sh
 	cp .zshrc /mnt/root/.zshrc
 	mkdir /mnt/var/log/install
 	mv *.log /mnt/var/log/install
@@ -288,12 +321,14 @@ echo
 
 prepare
 
-source bar.sh
+source progress_bar.sh
 
+tput setaf 7 && tput bold && echo ":: Running installation scripts..." && tput sgr0
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
 update_mirrors >update_mirrors.log 3>&2 2>&1
 install_base >install_base.log 3>&2 2>&1
+tput setaf 7 && tput bold && echo ":: Chrooting into new system..." && tput sgr0
 chroot_mnt
 finish
