@@ -10,18 +10,13 @@ install_linux(){
 
     STAT_ARRAY=( "Generating locales"
     "Created symlink"
-    "downloading libedit"
-    "downloading openssh"
-    "downloading wpa_supplicant"
-    "downloading wget"
-    "downloading vim-runtime"
-    "downloading git"
     "downloading parallel"
+    "downloading wget"
     "Processing package changes"
     "installing wget"
+    "installing parallel"
     "installing libedit"
     "installing openssh"
-    "installing parallel"
     "installing wpa_supplicant"
     "installing vim-runtime"
     "installing git"
@@ -55,7 +50,10 @@ install_linux(){
 	mkinitcpio -p linux
 
 	# Install and configure grub
-	pacman --noconfirm -S grub wget curl openssh parallel zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux < /dev/tty
+	pacman -S parallel wget
+	PACKAGES="grub curl openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
+	pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $PACKAGES
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	grub-install --target=i386-pc --recheck /dev/sda
 	grub-mkconfig -o /boot/grub/grub.cfg
@@ -139,7 +137,9 @@ install_x(){
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		pacman --noconfirm -S virtualbox-guest-modules-arch virtualbox-guest-utils
+		pacman -Sp --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils | \
+			parallel wget -q -P /var/cache/pacman/pkg {}
+		pacman -S --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils
 		#modprobe -a vboxguest vboxsf vboxvideo
 	}
 	
@@ -172,49 +172,29 @@ install_x(){
 
 build(){
 
-    STAT_ARRAY=("downloading openssl"
-    "downloading cmake"
-    "downloading http-parser"
-    "downloading nodejs"
-    "downloading cargo"
-    "installing openssl"
+    STAT_ARRAY=( "installing openssl"
     "installing http-parser"
     "installing nodejs"
     "installing cmake"
     "installing cargo"
-    "downloading python-pyparsing"
-    "downloading python-setuptools"
-    "downloading gdb-common"
-    "downloading leafpad"
-    "downloading yarn"
-    "downloading mongodb-tools"
     "installing python-pyparsing"
     "installing python-setuptools"
     "installing gdb-common"
     "installing yarn"
     "installing mongodb-tools"
     "installing leafpad"
-    "downloading btrfs-progs"
-    "downloading valgrind"
-    "downloading htop"
-    "downloading scrot"
-    "downloading ncmpcpp"
     "installing btrfs-progs"
     "installing valgrind"
     "installing scrot"
     "installing ncmpcpp"
     "installing htop"
-    "downloading sdl"
-    "downloading libproxy"
-    "downloading docker-machine"
-    "downloading virtualbox-host"
     "installing docker-machine"
     "installing sdl"
     "installing libproxy"
     "installing virtualbox-host"
     "loop"
     "Waiting on user scripts"
-    "We're done")
+    "We're done" )
 
 	# Initialize progress bar
     progress_bar " Building extras" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
@@ -231,8 +211,9 @@ build(){
 	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
-	pacman --noconfirm -S $DEV_PACKAGES
-
+	#pacman --noconfirm -S $DEV_PACKAGES
+	pacman -Sp --noconfirm $DEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $DEV_PACKAGES
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
@@ -240,11 +221,17 @@ build(){
 
 	# Get feh to work without starting X
 	
-	pacman --noconfirm -S $WEBDEV_PACKAGES
-	pacman --noconfirm -S $LANG_PACKAGES
-
+	#pacman --noconfirm -S $WEBDEV_PACKAGES
+	pacman -Sp --noconfirm $WEBDEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $WEBDEV_PACKAGES
+	#pacman --noconfirm -S $LANG_PACKAGES
+	pacman -Sp --noconfirm $LANG_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $LANG_PACKAGES
+	
 	# Configure docker, for more info consult the wiki
-	pacman --noconfirm -S $VM_PACKAGES
+	#pacman --noconfirm -S $VM_PACKAGES
+	pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	#modprobe loop
 	gpasswd -a $USER docker
