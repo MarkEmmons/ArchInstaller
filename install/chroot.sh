@@ -175,9 +175,13 @@ install_x(){
 		lvresize -L +100G ArchLinux/homevol
 	}
 
-	pacman --noconfirm -S $PACKAGES1
-	pacman --noconfirm -S $PACKAGES2
-	pacman --noconfirm -S $PACKAGES3
+	
+	pacman -Sp --noconfirm $PACKAGES1 | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $PACKAGES1
+	pacman -Sp --noconfirm $PACKAGES2 | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $PACKAGES2
+	pacman -Sp --noconfirm $PACKAGES3 | parallel wget -q -P /var/cache/pacman/pkg {}
+	pacman -S --noconfirm $PACKAGES3
 
 	# Run only if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
@@ -323,7 +327,6 @@ configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
 build > /var/log/install/chroot/build.log 3>&2 2>&1
 
-rm progress_bar.sh
 RUN_TIME=$(get_runtime)
 export RUN_TIME
 export USER
@@ -332,3 +335,6 @@ tput setaf 5 && tput bold && echo "Arch Linux has been installed!" && tput sgr0
 cat /var/log/install/time.log
 date
 python archey
+
+rm progress_bar.sh
+rm archey

@@ -7,7 +7,7 @@ wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install.sh -O - | ba
 Make sure to delete all previous partitions. You can use gdisk or a one liner such as:
 
 ```shell
-sgdisk --zap-all
+sgdisk --zap-all /dev/sda
 ```	
 
 Initial Installation Time: 42 min 34 sec
