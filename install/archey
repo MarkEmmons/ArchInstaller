@@ -11,6 +11,8 @@
 # Changes Jerome Launay <jerome@projet-libre.org>
 # Fedora support by YeOK <yeok@henpen.org>
 #
+# Modified to display post installation information by Mark A Emmons <MarkAndreasEmmons@gmail.com>
+#
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
 
