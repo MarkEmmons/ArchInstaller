@@ -26,7 +26,7 @@ from time import ctime, sleep
 
 #---------------Output---------------#
 
-output = [ 'Runtime', 'Hostname', 'Distro', 'Kernel', 'Uptime', 'Packages', 'CPU', 'RAM', 'Disk' ] 
+output = [ 'User', 'Runtime', 'Hostname', 'Distro', 'Kernel', 'Uptime', 'Shell', 'Packages', 'CPU', 'RAM', 'Disk' ] 
  
 #---------------Dictionaries---------------#
 
@@ -131,20 +131,17 @@ class Output:
 class User:
 	def __init__(self):
 		self.key = 'User'
-		self.value = os.getenv('USER')
+		self.value = os.environ["USER"]
 
 class Runtime:
         def __init__(self):
-                runtime = os.environ["RUN_TIME"]
-
                 self.key = 'Runtime'
-                self.value = runtime
+                self.value = os.environ["RUN_TIME"]
 
 class Hostname:
 	def __init__(self):
-		hostname = Popen(['uname', '-n'], stdout=PIPE, env=envDict).communicate()[0].decode('Utf-8').rstrip('\n')
 		self.key = 'Hostname'
-		self.value = hostname
+		self.value = os.environ["HOST"]
 			
 class Distro:
 	def __init__(self):
