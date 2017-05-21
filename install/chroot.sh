@@ -10,13 +10,6 @@ install_linux(){
 
     STAT_ARRAY=( "Generating locales"
     "Created symlink"
-    "downloading parallel"
-    "downloading wget"
-    "Processing package changes"
-    "installing wget"
-    "installing parallel"
-    "installing libedit"
-    "installing openssh"
     "installing wpa_supplicant"
     "installing vim-runtime"
     "installing git"
