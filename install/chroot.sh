@@ -327,4 +327,5 @@ build > /var/log/install/chroot/build.log 3>&2 2>&1
 rm progress_bar.sh
 RUN_TIME=$(get_runtime)
 export RUN_TIME
+tput setaf 5 && tput bold && echo "Arch Linux has been installed!" && tput sgr0
 python archey
