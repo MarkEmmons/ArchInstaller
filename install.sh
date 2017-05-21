@@ -25,6 +25,7 @@ prepare(){
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
 
 	# Dissalow screen blanking for installation
 	setterm -blank 0
@@ -294,21 +295,29 @@ install_base(){
 
 # Create fstab and chroot into the new system
 chroot_mnt(){
-	
+
+	# Copy over relevant files
 	cp progress_bar.sh /mnt/progress_bar.sh
 	cp .zshrc /mnt/root/.zshrc
 	mkdir /mnt/var/log/install
 	mv *.log /mnt/var/log/install
+	mv archey /mnt/archey
 
+	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
+	
+	# Configure clock.
+	[[ -f /mnt/etc/localtime ]] && rm /mnt/etc/localtime
+	ln -s /mnt/usr/share/zoneinfo/US/Central /mnt/etc/localtime
+	
 	arch-chroot /mnt /bin/bash < chroot.sh
 }
 
 # Unmount and reboot
 finish(){
-	read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n' < /dev/tty
 	umount -R /mnt
 	swapoff /dev/ArchLinux/swapvol
+	read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n' < /dev/tty
 	tput cnorm
 	reboot
 }
@@ -323,6 +332,8 @@ prepare
 
 source progress_bar.sh
 
+tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
+echo ""
 tput setaf 7 && tput bold && echo ":: Running installation scripts..." && tput sgr0
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1

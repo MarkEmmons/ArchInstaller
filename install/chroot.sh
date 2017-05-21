@@ -30,11 +30,6 @@ install_linux(){
     "Generating grub configuration file"
     "Found linux image: /boot/vmlinuz-linux" )
 
-	# Configure clock. This step must happen before the bar is initialized or the timing will be off
-	[[ -f /etc/localtime ]] && rm /etc/localtime
-	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
-	hwclock --systohc --utc
-
 	# Initialize progress bar
     progress_bar " Installing Linux" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
@@ -289,14 +284,47 @@ build(){
 	wait $BAR_ID
 }
 
+get_runtime(){
+	H_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $4}')
+	M_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $5}')
+	S_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $6}')
+
+	H_END=$(date | sed -e 's|:| |g' | awk '{print $4}')
+	M_END=$(date | sed -e 's|:| |g' | awk '{print $5}')
+	S_END=$(date | sed -e 's|:| |g' | awk '{print $6}')
+
+	if [[ $H_START -gt $H_END ]]; then 
+		H_END=$(($H_END + 24))
+	fi
+
+	if [[ $M_START -gt $M_END ]]; then
+		H_END=$(($H_END - 1))
+		M_END=$(($M_END + 60))
+	fi
+
+	if [[ $S_START -gt $S_END ]]; then
+		M_END=$(($M_END - 1))
+		S_END=$(($S_END + 60))
+	fi
+
+	H_RUN=$(($H_END - $H_START))
+	M_RUN=$(($M_END - $M_START))
+	S_RUN=$(($S_END - $S_START))
+
+	echo "${H_RUN} hours, ${M_RUN}:${S_RUN}"
+}
+
 # Main
 mkdir /var/log/install/chroot
 source progress_bar.sh
+hwclock --systohc --utc
 
 install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
 build > /var/log/install/chroot/build.log 3>&2 2>&1
 
-date >> /var/log/install/time.log
 rm progress_bar.sh
+RUN_TIME=$(get_runtime)
+export RUN_TIME
+python archey
