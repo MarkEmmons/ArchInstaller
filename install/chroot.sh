@@ -47,7 +47,6 @@ install_linux(){
 
 	# Add host
 	echo "$HOST" > /etc/hostname
-	unset $HOST
 
 	# Install Linux
 	cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup
@@ -327,5 +326,9 @@ build > /var/log/install/chroot/build.log 3>&2 2>&1
 rm progress_bar.sh
 RUN_TIME=$(get_runtime)
 export RUN_TIME
+export USER
+export HOST
 tput setaf 5 && tput bold && echo "Arch Linux has been installed!" && tput sgr0
+cat /var/log/install/time.log
+date
 python archey

@@ -1,6 +1,18 @@
-To run boot Arch installation disk and enter `wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install.sh -O - | bash`
-	
-Standard Install Time: 42 min 34 sec
+#### To install
+
+```shell
+wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install.sh -O - | bash
+```
+
+Make sure to delete all previous partitions. You can use gdisk or a one liner such as:
+
+```shell
+sgdisk --zap-all
+```	
+
+Initial Installation Time: 42 min 34 sec
 ------------------------------------
 After Optimization: 37 min 14 sec
------------------------
+------------------------------------
+Most Recently: 22 min 30 sec
+------------------------------------
