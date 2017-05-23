@@ -17,6 +17,26 @@ USER=
 PASS=
 RE_PASS=
 
+cache_packages(){
+
+	# Unlock previous device
+	echo "Previous installation found, enter passphrase to unlock" >&3
+	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
+
+	# Mount the filesystems
+	mount /dev/ArchLinux/rootvol /mnt
+	mount /dev/ArchLinux/homevol /mnt/home
+	mount /dev/sda2 /mnt/boot
+	swapon /dev/ArchLinux/swapvol
+	
+	# Backup pacman cache
+	tar -cvzf /tmp/pkg.tar.gz /mnt/var/cache/pacman/pkg
+
+	# Unmount before exiting
+	umount -R /mnt
+	swapoff /dev/ArchLinux/swapvol
+}
+
 # Clean disk and enable encryption
 prepare(){
 	
@@ -331,6 +351,8 @@ echo
 prepare
 
 source progress_bar.sh
+
+[[ -b /dev/sda3 ]] cache_packages >cache_packages.log 3>&2 2>&1
 
 tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
 echo ""
