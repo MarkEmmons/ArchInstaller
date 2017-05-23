@@ -146,16 +146,7 @@ prepare(){
 
 begin(){
 
-    STAT_ARRAY=( "GPT fdisk (gdisk) version 1.0.1"
-    "Partition table scan:"
-    "Found valid GPT with protective MBR; using GPT."
-    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'BIOS boot partition'"
-    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'Linux filesystem'"
-    "Hex code or GUID (L to show codes, Enter = 8300): Changed type of partition to 'Linux LVM'"
-    "Command (? for help):"
-    "Final checks complete. About to write GPT data. THIS WILL OVERWRITE EXISTING"
-    "OK; writing new GUID partition table (GPT) to"
-    "The operation has completed successfully." )
+    STAT_ARRAY=( "" )
 
 	# Initialize progress bar
     progress_bar " Getting started" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
