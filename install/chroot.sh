@@ -296,6 +296,7 @@ export HOST
 tput setaf 5 && tput bold && echo "Arch Linux has been installed!" && tput sgr0
 cat /var/log/install/time.log
 date
+get_runtime
 python archey
 
 rm progress_bar.sh
