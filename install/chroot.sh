@@ -45,7 +45,7 @@ install_linux(){
 	# Install and configure grub
 	pacman -S --noconfirm parallel wget
 	PACKAGES="grub curl openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
-	pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	grub-install --target=i386-pc --recheck /dev/sda
@@ -130,8 +130,8 @@ install_x(){
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		pacman -Sp --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils | \
-			parallel wget -q -P /var/cache/pacman/pkg {}
+		#pacman -Sp --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils | \
+		#	parallel wget -q -P /var/cache/pacman/pkg {}
 		pacman -S --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils
 		#modprobe -a vboxguest vboxsf vboxvideo
 	}
@@ -144,11 +144,11 @@ install_x(){
 	}
 
 	
-	pacman -Sp --noconfirm $PACKAGES1 | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $PACKAGES1 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES1
-	pacman -Sp --noconfirm $PACKAGES2 | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $PACKAGES2 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES2
-	pacman -Sp --noconfirm $PACKAGES3 | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $PACKAGES3 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES3
 
 	# Run only if this is a VirtualBox guest
@@ -205,7 +205,7 @@ build(){
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	#pacman --noconfirm -S $DEV_PACKAGES
-	pacman -Sp --noconfirm $DEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $DEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $DEV_PACKAGES
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
@@ -215,15 +215,15 @@ build(){
 	# Get feh to work without starting X
 	
 	#pacman --noconfirm -S $WEBDEV_PACKAGES
-	pacman -Sp --noconfirm $WEBDEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $WEBDEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $WEBDEV_PACKAGES
 	#pacman --noconfirm -S $LANG_PACKAGES
-	pacman -Sp --noconfirm $LANG_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $LANG_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $LANG_PACKAGES
 	
 	# Configure docker, for more info consult the wiki
 	#pacman --noconfirm -S $VM_PACKAGES
-	pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+	#pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	#modprobe loop
