@@ -263,54 +263,13 @@ update_mirrors(){
 # Refresh mirrors and install the base system
 install_base(){
 
-    STAT_ARRAY=( "There are 50 members in group base:"
-    "downloading gcc-libs"
-    "downloading bash"
-    "downloading cracklib"
-    "downloading dhcpcd"
-    "downloading grep"
-    "downloading linux-firmware"
-    "downloading mkinitcpio-busybox"
-    "downloading man-db"
-    "downloading curl"
-    "downloading pacman-mirrorlist"
-    "downloading tar"
-    "downloading fakeroot"
-    "downloading make"
-    "downloading sudo"
-    "downloading guile"
-    "Processing package changes..."
-    "installing gcc-libs"
-    "installing bash"
-    "installing cracklib"
-    "installing dhcpcd"
-    "installing grep"
-    "installing linux-firmware"
-    "installing mkinitcpio-busybox"
-    "installing man-db"
-    "installing curl"
-    "installing pacman-mirrorlist"
-    "installing tar"
-    "installing fakeroot"
-    "installing make"
-    "installing sudo"
-    "installing guile"
-    "Generating grub.cfg.example config file..."
-    "Running post-transaction hooks..."
-    "Updating udev hardware database..."
-    "Updating system user accounts..."
-    "Creating temporary files..."
-    "Arming ConditionNeedsUpdate..."
-    "Updating the info directory file..."
-    "Rebuilding certificate stores..." )
-
 	# Initialize progress bar
-    progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
-    BAR_ID=$!
+    #progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    #BAR_ID=$!
 	
 	pacman -Syy
-	pacstrap /mnt base base-devel grub-bios
-	wait $BAR_ID
+	pacstrap /mnt base base-devel grub-bios >&3
+	#wait $BAR_ID
 }
 
 # Create fstab and chroot into the new system
