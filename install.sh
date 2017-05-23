@@ -42,6 +42,7 @@ prepare(){
 	
 	# Fetch some extra stuff
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/zap.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
@@ -157,6 +158,9 @@ begin(){
 
 	# Enable encryption module
 	modprobe -a dm-mod dm_crypt
+	
+	# Zap any former entry
+	gdisk /dev/sda < zap.txt
 	
 	# Create partitions. Instructions can be modified in disk.txt
 	gdisk /dev/sda < disk.txt
@@ -352,7 +356,7 @@ prepare
 
 source progress_bar.sh
 
-[[ -b /dev/sda3 ]] cache_packages >cache_packages.log 3>&2 2>&1
+[[ -b /dev/sda3 ]] && cache_packages >cache_packages.log 3>&2 2>&1
 
 tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
 echo ""
