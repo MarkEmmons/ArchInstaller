@@ -17,6 +17,8 @@ USER=
 PASS=
 RE_PASS=
 
+CACHE=0
+
 cache_packages(){
 
 	# Unlock previous device
@@ -35,6 +37,8 @@ cache_packages(){
 	# Unmount before exiting
 	umount -R /mnt
 	swapoff /dev/ArchLinux/swapvol
+	
+	CACHE=1
 }
 
 # Clean disk and enable encryption
@@ -117,6 +121,7 @@ prepare(){
 				sed "s|ROOT_PASS_TO_BE|\"$ROOT\"|" -i chroot.sh
 				sed "s|USER_NAME_TO_BE|\"$USER\"|" -i chroot.sh
 				sed "s|USER_PASS_TO_BE|\"$PASS\"|" -i chroot.sh
+				sed "s|CACHE_VAL_TO_BE|\"$CACHE\"|" -i chroot.sh
 				
 				unset HOST; unset ROOT; unset USER; unset PASS
 				break
@@ -160,7 +165,7 @@ begin(){
 	modprobe -a dm-mod dm_crypt
 	
 	# Zap any former entry
-	gdisk /dev/sda < zap.txt
+	sgdisk --zap-all /dev/sda
 	
 	# Create partitions. Instructions can be modified in disk.txt
 	gdisk /dev/sda < disk.txt
@@ -329,10 +334,6 @@ chroot_mnt(){
 
 	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
-	
-	# Configure clock.
-	[[ -f /mnt/etc/localtime ]] && rm /mnt/etc/localtime
-	ln -s /mnt/usr/share/zoneinfo/US/Central /mnt/etc/localtime
 	
 	arch-chroot /mnt /bin/bash < chroot.sh
 }

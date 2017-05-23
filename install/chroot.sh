@@ -5,6 +5,8 @@ ROOT=ROOT_PASS_TO_BE
 USER=USER_NAME_TO_BE
 PASS=USER_PASS_TO_BE
 
+CACHE=CACHE_VAL_TO_BE
+
 # Normal chroot stuff
 install_linux(){
 
@@ -278,6 +280,11 @@ source progress_bar.sh
 hwclock --systohc --utc
 
 install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
+
+# Configure clock.
+[[ -f /mnt/etc/localtime ]] && rm /mnt/etc/localtime
+ln -s /mnt/usr/share/zoneinfo/US/Central /mnt/etc/localtime
+
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
 build > /var/log/install/chroot/build.log 3>&2 2>&1
