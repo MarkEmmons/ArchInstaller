@@ -27,16 +27,16 @@ cache_packages(){
 
 	# Mount the filesystems
 	mount /dev/ArchLinux/rootvol /mnt
-	mount /dev/ArchLinux/homevol /mnt/home
-	mount /dev/sda2 /mnt/boot
-	swapon /dev/ArchLinux/swapvol
 	
 	# Backup pacman cache
 	tar -cvzf /tmp/pkg.tar.gz /mnt/var/cache/pacman/pkg
 
 	# Unmount before exiting
 	umount -R /mnt
-	swapoff /dev/ArchLinux/swapvol
+
+	# Close LUKS container
+	vgchange -a n ArchLinux
+	cryptsetup luksClose lvm
 	
 	CACHE=1
 }
