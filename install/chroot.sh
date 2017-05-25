@@ -45,7 +45,7 @@ install_linux(){
 	mkinitcpio -p linux
 
 	# Install and configure grub
-	PACKAGES="openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
+	PACKAGES="openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
@@ -295,7 +295,7 @@ install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
 ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 hwclock --systohc --utc
 
-bash </dev/tty
+#bash </dev/tty
 
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1
