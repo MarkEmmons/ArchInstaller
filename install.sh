@@ -27,6 +27,7 @@ cache_packages(){
 	# Unlock previous device
 	echo "Previous installation found, enter passphrase to unlock" >&3
 	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
+	echo $?
 	sleep 1
 
 	# Mount the filesystems
@@ -306,7 +307,7 @@ finish(){
 	reboot
 }
 
-tput civis
+#tput civis
 clear
 
 echo "Preparing to install ArchLinux"
