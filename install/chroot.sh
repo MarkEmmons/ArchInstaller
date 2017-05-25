@@ -46,7 +46,7 @@ install_linux(){
 
 	# Install and configure grub
 	pacman -S --noconfirm parallel wget
-	PACKAGES="grub curl openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
+	PACKAGES="openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
@@ -245,6 +245,8 @@ build(){
 }
 
 get_runtime(){
+
+	# Get time at start and completion of script
 	H_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $4}')
 	M_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $5}')
 	S_START=$(cat /var/log/install/time.log | sed -e 's|:| |g' | awk '{print $6}')
@@ -253,6 +255,15 @@ get_runtime(){
 	M_END=$(date | sed -e 's|:| |g' | awk '{print $5}')
 	S_END=$(date | sed -e 's|:| |g' | awk '{print $6}')
 
+	# Strip leading zeros
+	H_START=$((10#$H_START))
+	M_START=$((10#$M_START))
+	S_START=$((10#$S_START))
+
+	H_END=$((10#$H_END))
+	M_END=$((10#$M_END))
+	S_END=$((10#$S_END))	
+	
 	if [[ $H_START -gt $H_END ]]; then 
 		H_END=$(($H_END + 24))
 	fi
