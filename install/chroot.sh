@@ -282,7 +282,7 @@ get_runtime(){
 	M_RUN=$(($M_END - $M_START))
 	S_RUN=$(($S_END - $S_START))
 
-	echo "${H_RUN} hours, ${M_RUN}:${S_RUN}"
+	echo "${H_RUN} hours: ${M_RUN}.${S_RUN}"
 }
 
 # Main
