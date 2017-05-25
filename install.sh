@@ -21,6 +21,9 @@ CACHE=0
 
 cache_packages(){
 
+	# See if an old installation is available
+	cryptsetup isLuks /dev/sda3 || return
+
 	# Unlock previous device
 	echo "Previous installation found, enter passphrase to unlock" >&3
 	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
@@ -29,8 +32,11 @@ cache_packages(){
 	mount /dev/ArchLinux/rootvol /mnt
 	
 	# Backup pacman cache
-	tar -cvzf /tmp/pkg.tar.gz /mnt/var/cache/pacman/pkg
-
+	tar -cvzf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg .
+	
+	# Modify pacstrap to untar pkg cache
+	sed '/Installing packages to/ i tar -xvf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg' -i $(which pacstrap)
+	
 	# Unmount before exiting
 	umount -R /mnt
 
@@ -116,6 +122,8 @@ prepare(){
 			else
 				clear
 				unset RE_CRYPT; unset RE_ROOT;  unset RE_PASS
+				
+				cache_packages >cache_packages.log 3>&2 2>&1
 				
 				sed "s|HOST_NAME_TO_BE|\"$HOST\"|" -i chroot.sh
 				sed "s|ROOT_PASS_TO_BE|\"$ROOT\"|" -i chroot.sh
@@ -306,8 +314,6 @@ echo
 prepare
 
 source progress_bar.sh
-
-[[ -b /dev/sda3 ]] && cache_packages >cache_packages.log 3>&2 2>&1
 
 tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
 echo ""
