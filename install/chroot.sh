@@ -45,7 +45,6 @@ install_linux(){
 	mkinitcpio -p linux
 
 	# Install and configure grub
-	pacman -S --noconfirm parallel wget
 	PACKAGES="openssh zsh dialog wpa_actiond wpa_supplicant vim git python2 tmux"
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman -S --noconfirm $PACKAGES

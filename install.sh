@@ -36,6 +36,8 @@ cache_packages(){
 		RET=$?
 	done
 	
+	# TODO: cache {dotfiles, aur packages, .vim/bundle}
+	
 	# Backup pacman cache
 	tar -cvzf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg .
 	
@@ -281,7 +283,7 @@ install_base(){
     #BAR_ID=$!
 	
 	pacman -Syy
-	pacstrap /mnt base base-devel grub-bios >&3
+	pacstrap /mnt base base-devel grub-bios parallel wget >&3
 	#wait $BAR_ID
 }
 
