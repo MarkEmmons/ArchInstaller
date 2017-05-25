@@ -27,11 +27,14 @@ cache_packages(){
 	# Unlock previous device
 	echo "Previous installation found, enter passphrase to unlock" >&3
 	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
-	echo $?
-	sleep 1
-
+	
 	# Mount the filesystems
-	mount /dev/ArchLinux/rootvol /mnt
+	mount /dev/ArchLinux/rootvol /mnt > /dev/null
+	RET=$?
+	while [[ $RET -gt 0 ]]; do
+		mount /dev/ArchLinux/rootvol /mnt > /dev/null
+		RET=$?
+	done
 	
 	# Backup pacman cache
 	tar -cvzf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg .
