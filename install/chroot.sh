@@ -76,7 +76,7 @@ configure_users(){
 	echo "root:$ROOT" | chpasswd
 	unset $ROOT
 	echo "Root password set."
-	chsh -s $(which zsh)
+	chsh -s /bin/zsh
 
 	# Give new user root-privileges
 	echo "Adding new user..."
@@ -294,6 +294,8 @@ install_linux > /var/log/install/chroot/install_linux.log 3>&2 2>&1
 [[ -f /etc/localtime ]] && rm /etc/localtime
 ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 hwclock --systohc --utc
+
+bash </dev/tty
 
 configure_users > /var/log/install/chroot/configure_users.log 3>&2 2>&1
 install_x > /var/log/install/chroot/install_x.log 3>&2 2>&1

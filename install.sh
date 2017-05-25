@@ -301,11 +301,11 @@ install_base(){
 	pacstrap /mnt base base-devel grub-bios parallel wget >&3
 
 	# Copy over relevant files
-	cp progress_bar.sh /mnt/progress_bar.sh
-	cp .zshrc /mnt/root/.zshrc
 	mkdir /mnt/var/log/install
 	mv *.log /mnt/var/log/install
 	mv archey /mnt/archey
+	cp progress_bar.sh /mnt/progress_bar.sh
+	cp /etc/zsh/zshrc /mnt/root/.zshrc
 
 	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
