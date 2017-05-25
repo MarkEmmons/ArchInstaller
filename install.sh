@@ -58,8 +58,6 @@ cache_packages(){
 prepare(){
 	
 	# Fetch some extra stuff
-	#wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
-	#wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
@@ -214,7 +212,7 @@ encrypt(){
 	echo "Disk successfully encrypted."
 	echo "Unlocking disk..."
 	echo -n "$CRYPT" | \
-	cryptsetup --key-file="-" luksOpen /dev/sda3 lvm #< /dev/tty
+	cryptsetup --key-file="-" luksOpen /dev/sda3 lvm
 	unset CRYPT
 	echo "Disk successfully unlocked."
 	echo

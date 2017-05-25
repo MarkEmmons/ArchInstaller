@@ -5,16 +5,6 @@ get_aur_packages(){
 
 	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
 
-	#AUR_PACKAGES=( https://aur.archlinux.org/cgit/aur.git/snapshot/b43-firmware.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/bash-pipes.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/cava.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/expressvpn.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/phallus-fonts-git.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/fzf-git.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/i3-gaps.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/neofetch.tar.gz
-	#https://aur.archlinux.org/cgit/aur.git/snapshot/spotify.tar.gz )
-
 	AUR_PACKAGES=( b43-firmware
 	bash-pipes
 	cava
@@ -29,7 +19,6 @@ get_aur_packages(){
 	mkdir $HOME/packages
 	cd $HOME/packages && \	
 	printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "git clone https://aur.archlinux.org/{}.git"
-	#printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "curl {} | tar -xz"
 }
 
 # Get dotfiles
