@@ -58,9 +58,8 @@ cache_packages(){
 prepare(){
 	
 	# Fetch some extra stuff
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/zap.txt
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
+	#wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/disk.txt
+	#wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/mirror.txt
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
@@ -174,7 +173,24 @@ begin(){
 	sgdisk --zap-all /dev/sda
 	
 	# Create partitions. Instructions can be modified in disk.txt
-	gdisk /dev/sda < disk.txt
+	gdisk /dev/sda <<< "n
+
+
++1007K
+ef02
+n
+
+
++100M
+
+n
+
+
+
+8e00
+w
+Y
+"
 	
 	wait $BAR_ID
 }
@@ -270,7 +286,8 @@ update_mirrors(){
 	echo "Got armrr"
 	chmod u+x armrr
 	echo "Running armrr..."
-	./armrr US < mirror.txt
+	./armrr US <<< "n
+y"
 	echo "Got new mirror list"
 	wait $BAR_ID
 }
@@ -282,13 +299,8 @@ install_base(){
     #progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     #BAR_ID=$!
 	
-	pacman -Syy
+	#pacman -Syy
 	pacstrap /mnt base base-devel grub-bios parallel wget >&3
-	#wait $BAR_ID
-}
-
-# Create fstab and chroot into the new system
-chroot_mnt(){
 
 	# Copy over relevant files
 	cp progress_bar.sh /mnt/progress_bar.sh
@@ -300,6 +312,11 @@ chroot_mnt(){
 	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
 	
+	#wait $BAR_ID
+}
+
+# Create fstab and chroot into the new system
+chroot_mnt(){
 	arch-chroot /mnt /bin/bash < chroot.sh
 }
 
