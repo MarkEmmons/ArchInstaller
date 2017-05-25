@@ -26,7 +26,10 @@ cache_packages(){
 
 	# Unlock previous device
 	echo "Previous installation found, enter passphrase to unlock" >&3
-	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
+	echo -n "$CRYPT" | \
+	cryptsetup --key-file="-" luksOpen /dev/sda3 lvm #< /dev/tty
+
+	#cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
 
 	# Mount the filesystems
 	mount /dev/ArchLinux/rootvol /mnt
