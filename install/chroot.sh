@@ -46,7 +46,7 @@ install_linux(){
 
 	# Install and configure grub
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
+	pacman -S --noconfirm zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	grub-install --target=i386-pc --recheck /dev/sda
 	grub-mkconfig -o /boot/grub/grub.cfg

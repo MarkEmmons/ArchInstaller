@@ -298,7 +298,7 @@ install_base(){
     #BAR_ID=$!
 	
 	#pacman -Syy
-	pacstrap /mnt base base-devel grub-bios zsh parallel wget >&3
+	pacstrap /mnt base base-devel grub-bios >&3
 
 	# Copy over relevant files
 	mkdir /mnt/var/log/install
@@ -315,7 +315,7 @@ install_base(){
 
 # Create fstab and chroot into the new system
 chroot_mnt(){
-	arch-chroot /mnt /bin/zsh < chroot.sh
+	arch-chroot /mnt /bin/bash < chroot.sh
 }
 
 # Unmount and reboot
