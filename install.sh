@@ -325,7 +325,6 @@ encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
 update_mirrors >update_mirrors.log 3>&2 2>&1
 install_base >install_base.log 3>&2 2>&1
-#tput setaf 7 && tput bold && echo ":: Chrooting into new system..." && tput sgr0
-#chroot_mnt
-#finish
-tput cnorm
+tput setaf 7 && tput bold && echo ":: Chrooting into new system..." && tput sgr0
+chroot_mnt
+finish
