@@ -42,13 +42,16 @@ install_linux(){
 	cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup
 	sed 's|MODULES=\"\"|MODULES=\"btrfs\"|' -i /etc/mkinitcpio.conf
 	grep "^[^#;]" /etc/mkinitcpio.conf | grep "HOOKS=" | sed 's|filesystems|encrypt lvm2 filesystems|' -i /etc/mkinitcpio.conf
+	echo -e "\nRunning mkinitcpio"
 	mkinitcpio -p linux
 
 	# Install and configure grub
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
+	echo -e "\nRunning grub-install"
 	grub-install --target=i386-pc --recheck /dev/sda
+	echo -e "\nRunning grub-mkconfig"
 	grub-mkconfig -o /boot/grub/grub.cfg
 	
 	wait $BAR_ID
