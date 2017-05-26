@@ -29,6 +29,7 @@ cache_packages(){
 	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
 	
 	# Mount the filesystems
+	echo "Mounting former file system"
 	mount /dev/ArchLinux/rootvol /mnt > /dev/null
 	RET=$?
 	while [[ $RET -gt 0 ]]; do
@@ -39,9 +40,11 @@ cache_packages(){
 	# TODO: cache {dotfiles, aur packages, .vim/bundle}
 	
 	# Backup pacman cache
+	echo "Backing up pacman pkg cache"
 	tar -cvzf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg .
 	
 	# Modify pacstrap to untar pkg cache
+	echo "Modifying pacstrap"
 	sed '/Installing packages to/ i tar -xvf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg' -i $(which pacstrap)
 	
 	# Unmount before exiting
@@ -293,12 +296,14 @@ y"
 # Refresh mirrors and install the base system
 install_base(){
 
+	STAT_ARRAY=()
+
 	# Initialize progress bar
-    #progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
-    #BAR_ID=$!
+    progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    BAR_ID=$!
 	
 	#pacman -Syy
-	pacstrap /mnt base base-devel grub-bios >&3
+	pacstrap /mnt base base-devel grub-bios
 
 	# Copy over relevant files
 	mkdir /mnt/var/log/install
@@ -310,7 +315,7 @@ install_base(){
 	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
 	
-	#wait $BAR_ID
+	wait $BAR_ID
 }
 
 # Create fstab and chroot into the new system

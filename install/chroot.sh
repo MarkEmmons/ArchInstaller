@@ -46,7 +46,7 @@ install_linux(){
 
 	# Install and configure grub
 	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
+	pacman --needed --noconfirm --noprogressbar -S zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	grub-install --target=i386-pc --recheck /dev/sda
 	grub-mkconfig -o /boot/grub/grub.cfg
@@ -145,11 +145,11 @@ install_x(){
 
 	
 	#pacman -Sp --noconfirm $PACKAGES1 | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $PACKAGES1
+	pacman --needed --noconfirm --noprogressbar -S $PACKAGES1
 	#pacman -Sp --noconfirm $PACKAGES2 | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $PACKAGES2
+	pacman --needed --noconfirm --noprogressbar -S $PACKAGES2
 	#pacman -Sp --noconfirm $PACKAGES3 | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $PACKAGES3
+	pacman --needed --noconfirm --noprogressbar -S $PACKAGES3
 
 	# Run only if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
@@ -206,7 +206,7 @@ build(){
 
 	#pacman --noconfirm -S $DEV_PACKAGES
 	#pacman -Sp --noconfirm $DEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $DEV_PACKAGES
+	pacman --needed --noconfirm --noprogressbar -S $DEV_PACKAGES
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
@@ -216,15 +216,15 @@ build(){
 	
 	#pacman --noconfirm -S $WEBDEV_PACKAGES
 	#pacman -Sp --noconfirm $WEBDEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $WEBDEV_PACKAGES
+	pacman --needed --noconfirm --noprogressbar -S $WEBDEV_PACKAGES
 	#pacman --noconfirm -S $LANG_PACKAGES
 	#pacman -Sp --noconfirm $LANG_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $LANG_PACKAGES
+	pacman --needed --noconfirm --noprogressbar -S $LANG_PACKAGES
 	
 	# Configure docker, for more info consult the wiki
 	#pacman --noconfirm -S $VM_PACKAGES
 	#pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
-	pacman -S --noconfirm $VM_PACKAGES
+	pacman --needed --noconfirm --noprogressbar -S $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
 	#modprobe loop
 	gpasswd -a $USER docker
@@ -304,6 +304,8 @@ RUN_TIME=$(get_runtime)
 export RUN_TIME
 export USER
 export HOST
+SHELL="/bin/zsh"
+export SHELL
 tput setaf 5 && tput bold && echo "Arch Linux has been installed!" && tput sgr0
 python archey
 
