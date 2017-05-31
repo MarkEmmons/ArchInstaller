@@ -1,0 +1,66 @@
+# $Id$
+# Maintainer: Mark A Emmons <MarkAndreasEmmons@gmail.com>
+
+pkgname=arch-fonts
+pkgver=1.00
+pkgrel=1
+pkgdesc="Preferred fonts"
+arch=('any')
+url="https://github.com/MarkEmmons/arch-fonts"
+#license=('custom')
+depends=('git' 'fontconfig' 'xorg-font-utils' 'xorg-fonts-encodings' 'xorg-mkfontscale' 'xorg-mkfontdir' )
+optdepends=('chromium' 'libreoffice-fresh' 'gimp' 'ttf-dejavu')
+source=("${pkgname}::git+https://github.com/MarkEmmons/arch-fonts")
+md5sums=('SKIP')
+
+_maps=(ISO8859-1 ISO8859-2 ISO8859-4 ISO8859-9 ISO8859-15)
+
+prepare() {
+    cd "$srcdir/${_pkgname}"
+    sed -i '/^\(FONT\|CHARSET_REGISTRY\)/s/ISO8859/ISO10646/' *.bdf
+    for f in *.bdf; do
+        for m in "${_maps[@]}"; do
+            ucs2any "$f" "/usr/share/fonts/util/map-$m" "$m"
+        done
+    done
+}
+
+pkgver() {
+    cd "$srcdir/${_pkgname}"
+    echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+    cd "$srcdir/${_pkgname}"
+    for f in *.bdf; do
+        bdftopcf -o "${f%.bdf}.pcf" "$f"
+    done
+    gzip *.pcf
+}
+
+
+package() {
+    cd "$srcdir/${_pkgname}"
+    for f in *.pcf.gz; do
+        install -D -m644 "$f" "${pkgdir}/usr/share/fonts/misc/$f"
+    done
+    #install -D -m644 license "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+#package() {
+#  install -dm755 "${pkgdir}"/etc/fonts/conf.avail
+#  install -dm755 "${pkgdir}"/etc/fonts/conf.d
+#  install -dm755 "${pkgdir}"/usr/share/fonts/TTF
+#
+#  cd "${srcdir}"/dejavu-fonts-ttf-${pkgver}
+#  install -m644 ttf/*.ttf "${pkgdir}"/usr/share/fonts/TTF/
+#  install -m644 fontconfig/*.conf "${pkgdir}"/etc/fonts/conf.avail/
+#
+#  pushd "${pkgdir}"/etc/fonts/conf.avail
+#  for config in *; do
+#    ln -sf ../conf.avail/${config} ../conf.d/${config}
+#  done
+#  popd
+#
+#  install -Dm644 LICENSE "${pkgdir}"/usr/share/licenses/${pkgname}/LICENSE
+#}
