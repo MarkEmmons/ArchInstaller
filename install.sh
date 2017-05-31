@@ -64,7 +64,7 @@ prepare(){
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/vector-16.psf
+	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/fonts/vector-16.psf
 
 	# Dissalow screen blanking for installation
 	setterm -blank 0
