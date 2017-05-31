@@ -64,7 +64,6 @@ prepare(){
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/fonts/vector-16.psf
 
 	# Dissalow screen blanking for installation
 	setterm -blank 0
@@ -310,7 +309,6 @@ install_base(){
 	mkdir /mnt/var/log/install
 	mv *.log /mnt/var/log/install
 	mv archey /mnt/archey
-	mv vector-16.psf /mnt/usr/share/kbd/consolefonts/vector-16.psf
 	cp progress_bar.sh /mnt/progress_bar.sh
 	cp /etc/zsh/zshrc /mnt/root/.zshrc
 

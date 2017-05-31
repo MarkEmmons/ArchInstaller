@@ -41,8 +41,8 @@ install_linux(){
 	# Install Linux
 	cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup
 	sed 's|MODULES=\"\"|MODULES=\"btrfs\"|' -i /etc/mkinitcpio.conf
-	echo "FONT=vector-16" > /etc/vconsole.conf
-	grep "^[^#;]" /etc/mkinitcpio.conf | grep "HOOKS=" | sed 's|filesystems|encrypt lvm2 filesystems consolefont|' -i /etc/mkinitcpio.conf
+	#echo "FONT=vector-16" > /etc/vconsole.conf ||  consolefont
+	grep "^[^#;]" /etc/mkinitcpio.conf | grep "HOOKS=" | sed 's|filesystems|encrypt lvm2 filesystems|' -i /etc/mkinitcpio.conf
 	echo -e "\nRunning mkinitcpio"
 	mkinitcpio -p linux
 
