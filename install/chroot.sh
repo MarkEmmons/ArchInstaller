@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#pacman --noconfirm -S $VM_PACKAGES
+#pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
+
 HOST=HOST_NAME_TO_BE
 ROOT=ROOT_PASS_TO_BE
 USER=USER_NAME_TO_BE
@@ -47,7 +50,6 @@ install_linux(){
 	mkinitcpio -p linux
 
 	# Install and configure grub
-	#pacman -Sp --noconfirm $PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	echo -e "\nRunning grub-install"
@@ -131,13 +133,11 @@ install_x(){
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
 	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop xorg-xlsfonts xorg-xfontsel"
+	GOHUDEPS="xorg-fonts-encodings xorg-fonts-alias xorg-font-utils fontconfig"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
-		#pacman -Sp --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils | \
-		#	parallel wget -q -P /var/cache/pacman/pkg {}
 		pacman -S --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils
-		#modprobe -a vboxguest vboxsf vboxvideo
 	}
 	
 	# Add more space to a non-virtual machine
@@ -148,12 +148,10 @@ install_x(){
 	}
 
 	
-	#pacman -Sp --noconfirm $PACKAGES1 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES1
-	#pacman -Sp --noconfirm $PACKAGES2 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES2
-	#pacman -Sp --noconfirm $PACKAGES3 | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES3
+	pacman --needed --noconfirm --noprogressbar -S $GOHUDEPS
 
 	# Run only if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
@@ -205,42 +203,32 @@ build(){
 	# Install additional packages
 	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
 	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
-	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
+	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop imagemagick"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
-	#pacman --noconfirm -S $DEV_PACKAGES
-	#pacman -Sp --noconfirm $DEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $DEV_PACKAGES
+	
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
 	#disown
 
-	# Get feh to work without starting X
-	
-	#pacman --noconfirm -S $WEBDEV_PACKAGES
-	#pacman -Sp --noconfirm $WEBDEV_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $WEBDEV_PACKAGES
-	#pacman --noconfirm -S $LANG_PACKAGES
-	#pacman -Sp --noconfirm $LANG_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $LANG_PACKAGES
 	
 	# Configure docker, for more info consult the wiki
-	#pacman --noconfirm -S $VM_PACKAGES
-	#pacman -Sp --noconfirm $VM_PACKAGES | parallel wget -q -P /var/cache/pacman/pkg {}
 	pacman --needed --noconfirm --noprogressbar -S $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
-	#modprobe loop
 	gpasswd -a $USER docker
 
 	# Wait for user scripts to finish
 	echo "Waiting on user scripts"
-	date
 	wait $PID
-	echo "We're done!"
-	date
-	#cd /home/$USER/packages/gohufont && makepkg --noconfirm -si
-	cd
+	
+	# Install gohu and wal
+	cd /home/$USER/packages/gohufont && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
+	cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
+	cd /
 
 	# Don't need these anymore
 	rm /usr/bin/user_scripts
