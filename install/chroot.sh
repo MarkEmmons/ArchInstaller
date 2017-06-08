@@ -230,6 +230,8 @@ build(){
 	cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
 	cd /
 
+	echo "We're done"
+
 	# Don't need these anymore
 	rm /usr/bin/user_scripts
 	
