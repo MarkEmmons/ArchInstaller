@@ -298,7 +298,11 @@ install_base(){
 
 	STAT_ARRAY=( "Creating install root at"
 	"members in group base"
-	"may fail on some machines" )
+	"installing curl"
+	"installing pacman"
+	"may fail on some machines"
+	"Updating system user accounts"
+	"Rebuilding certificate stores" )
 
 	# Initialize progress bar
     progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &

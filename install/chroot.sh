@@ -201,9 +201,9 @@ build(){
 	chmod a+x /usr/bin/user_scripts
 	
 	# Install additional packages
-	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo"
+	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo imagemagick"
 	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
-	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop imagemagick"
+	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --needed --noconfirm --noprogressbar -S $DEV_PACKAGES
