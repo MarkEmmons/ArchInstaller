@@ -296,7 +296,9 @@ y"
 # Refresh mirrors and install the base system
 install_base(){
 
-	STAT_ARRAY=()
+	STAT_ARRAY=( "Creating install root at"
+	"members in group base"
+	"may fail on some machines" )
 
 	# Initialize progress bar
     progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &

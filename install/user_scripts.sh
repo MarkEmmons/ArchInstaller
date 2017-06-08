@@ -4,13 +4,14 @@
 get_aur_packages(){
 
 	# ** AUR packages can be unpredictable, do not automate compilation of AUR packages.
+	#phallus-fonts-git
 
 	AUR_PACKAGES=( b43-firmware
 	bash-pipes
 	cava
 	expressvpn
-	phallus-fonts-git
 	fzf-git
+	gohufont
 	i3-gaps
 	neofetch
 	spotify )

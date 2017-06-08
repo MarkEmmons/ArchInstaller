@@ -130,7 +130,7 @@ install_x(){
 	
 	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
 	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
-	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop"
+	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop xorg-xlsfonts xorg-xfontsel"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
@@ -239,6 +239,8 @@ build(){
 	wait $PID
 	echo "We're done!"
 	date
+	#cd /home/$USER/packages/gohufont && makepkg --noconfirm -si
+	cd
 
 	# Don't need these anymore
 	rm /usr/bin/user_scripts
