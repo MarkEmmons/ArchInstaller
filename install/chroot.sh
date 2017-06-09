@@ -229,6 +229,7 @@ build(){
 	cd /home/$USER/packages/gohufont && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
 	cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
 	cd /home/$USER && sudo -u $USER wal -i wallpapers/ATAT.jpg
+	cd /
 
 	echo "We're done"
 
