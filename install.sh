@@ -230,19 +230,25 @@ prepare(){
 
 begin(){
 
-    STAT_ARRAY=( "" )
+    STAT_ARRAY=( "Enabling encryption"
+	"Zapping former partitions"
+	"Creating new partitions"
+	"Done" )
 
 	# Initialize progress bar
     progress_bar " Getting started" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 
 	# Enable encryption module
+	echo "Enabling encryption"
 	modprobe -a dm-mod dm_crypt
 	
 	# Zap any former entry
+	echo "Zapping former partitions"
 	sgdisk --zap-all /dev/sda
 	
 	# Create partitions. Instructions can be modified in disk.txt
+	echo "Creating new partitions"
 	gdisk /dev/sda <<< "n
 
 
@@ -262,6 +268,7 @@ w
 Y
 "
 	
+	echo "Done"
 	wait $BAR_ID
 }
 
