@@ -176,7 +176,7 @@ progress_bar(){
             FUN_NAME="\t\t\t" # Empty string
             ;;
         *)
-            FUN_NAME="${1:0:24}" # Given string is too long
+            FUN_NAME="${1:0:23} " # Given string is too long
             ;;
     esac
 

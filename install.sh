@@ -71,7 +71,7 @@ cache_packages(){
 	"Successfully cached packages" )
 
 	# Initialize progress bar
-    progress_bar " Retrieving package cache" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
+    progress_bar " Backing up pkg-cache" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
 	
 	# Mount the filesystems
@@ -109,25 +109,25 @@ cache_packages(){
 prepare(){
 	
 	# Set colors... for fun
-	/bin/echo -e "
-	\e]P0000000
-	\e]P1685742
-	\e]P29d6a47
-	\e]P3b36d43
-	\e]P478824b
-	\e]P5d99f57
-	\e]P6c9a554
-	\e]P7ead49b
-	\e]P8666666
-	\e]P9685742
-	\e]PA9d6a47
-	\e]PBb36d43
-	\e]PC78824b
-	\e]PDd99f57
-	\e]PEc9a554
-	\e]PFead49b
-	"
-	clear
+	#/bin/echo -e "
+	#\e]P0000000
+	#\e]P1685742
+	#\e]P29d6a47
+	#\e]P3b36d43
+	#\e]P478824b
+	#\e]P5d99f57
+	#\e]P6c9a554
+	#\e]P7ead49b
+	#\e]P8666666
+	#\e]P9685742
+	#\e]PA9d6a47
+	#\e]PBb36d43
+	#\e]PC78824b
+	#\e]PDd99f57
+	#\e]PEc9a554
+	#\e]PFead49b
+	#"
+	#clear
 	
 	# Fetch some extra stuff
 	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
