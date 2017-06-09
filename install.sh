@@ -28,7 +28,6 @@ cache_packages(){
 	echo "Previous installation found, enter passphrase to unlock" >&3
 	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
 	
-	source progress_bar.sh
 	STAT_ARRAY=( "linux-api-headers"
 	"libldap"
 	"pambase"
@@ -199,13 +198,10 @@ prepare(){
 				clear
 				unset RE_CRYPT; unset RE_ROOT;  unset RE_PASS
 				
-				cache_packages >cache_packages.log 3>&2 2>&1
-				
 				sed "s|HOST_NAME_TO_BE|\"$HOST\"|" -i chroot.sh
 				sed "s|ROOT_PASS_TO_BE|\"$ROOT\"|" -i chroot.sh
 				sed "s|USER_NAME_TO_BE|\"$USER\"|" -i chroot.sh
 				sed "s|USER_PASS_TO_BE|\"$PASS\"|" -i chroot.sh
-				sed "s|CACHE_VAL_TO_BE|\"$CACHE\"|" -i chroot.sh
 				
 				unset HOST; unset ROOT; unset USER; unset PASS
 				break
@@ -413,35 +409,17 @@ install_base(){
 	"nodejs"
 	"members in group base"
 	"installing linux-api-headers"
-	"installing libldap"
 	"installing pambase"
 	"installing dhcpcd"
 	"installing man-pages"
-	"installing mdadm"
-	"installing libtasn1"
-	"installing p11-kit"
 	"installing git"
 	"installing python2"
-	"installing libutempter"
-	"installing xproto"
-	"installing libxdmcp"
-	"installing libsamplerate"
 	"installing wireless_tools"
-	"installing libid3tag"
-	"installing imlib2"
-	"installing libxpm"
-	"installing libxaw"
 	"installing i3lock"
 	"installing dmenu"
 	"installing http-parser"
 	"installing htop"
-	"installing qt5-x11extras"
-	"installing xorg-fonts-75dpi"
-	"installing xorg-iceauth"
-	"installing xf86driproto"
-	"installing xorg-xcmsdb"
-	"installing xorg-xcursorgen"
-	"installing xorg-xev"
+	"installing xorg-fonts"
 	"installing sqlite"
 	"installing nano"
 	"installing sudo"
@@ -501,6 +479,8 @@ source progress_bar.sh
 tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
 echo ""
 tput setaf 7 && tput bold && echo ":: Running installation scripts..." && tput sgr0
+cache_packages >cache_packages.log 3>&2 2>&1
+sed "s|CACHE_VAL_TO_BE|\"$CACHE\"|" -i chroot.sh
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
