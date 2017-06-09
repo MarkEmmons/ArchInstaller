@@ -142,7 +142,7 @@ install_x(){
 	
 	# Add more space to a non-virtual machine
 	phys_machine_resize(){
-		lvresize -L -120G ArchLinux/pool
+		lvresize -L -120G ArchLinux/pool <<< "y"
 		lvresize -L +20G ArchLinux/rootvol
 		lvresize -L +100G ArchLinux/homevol
 	}
