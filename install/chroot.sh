@@ -145,6 +145,8 @@ install_x(){
 		lvresize -L -120G ArchLinux/pool <<< "y"
 		lvresize -L +20G ArchLinux/rootvol
 		lvresize -L +100G ArchLinux/homevol
+		btrfs filesystem resize max /
+		btrfs filesystem resize max /home
 	}
 
 	
