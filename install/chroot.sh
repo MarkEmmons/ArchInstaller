@@ -26,7 +26,7 @@ install_linux(){
 	# Initialize progress bar
     progress_bar " Installing Linux" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	# Generate locales
 	sed 's|#en_US|en_US|' -i /etc/locale.gen
 	locale-gen
@@ -50,13 +50,13 @@ install_linux(){
 	mkinitcpio -p linux
 
 	# Install and configure grub
-	pacman --needed --noconfirm --noprogressbar -S zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git python2 tmux
+	pacman --needed --noconfirm --noprogressbar -S zsh parallel wget openssh dialog wpa_actiond wpa_supplicant vim git tmux
 	sed 's|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"cryptdevice=/dev/sda3:ArchLinux root=/dev/mapper/ArchLinux-rootvol\"|' -i /etc/default/grub
 	echo -e "\nRunning grub-install"
 	grub-install --target=i386-pc --recheck /dev/sda
 	echo -e "\nRunning grub-mkconfig"
 	grub-mkconfig -o /boot/grub/grub.cfg
-	
+
 	wait $BAR_ID
 }
 
@@ -75,7 +75,7 @@ configure_users(){
 	# Initialize progress bar
     progress_bar " Configuring users" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	# Choose password for root and change default shell to zsh
 	echo "Setting root password..."
 	echo "root:$ROOT" | chpasswd
@@ -93,7 +93,7 @@ configure_users(){
 	echo "Adding user to sudoers..."
 	sed "s/^root ALL=(ALL) ALL/root ALL=(ALL) ALL\n$USER ALL=(ALL) ALL/" -i /etc/sudoers
 	echo "New user created."
-	
+
 	wait $BAR_ID
 }
 
@@ -129,17 +129,17 @@ install_x(){
 	# Initialize progress bar
     progress_bar " Installing Xorg" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
-	PACKAGES1="mesa xf86-video-vesa xf86-video-intel xf86-video-fbdev xf86-input-synaptics alsa-utils"
-	PACKAGES2="i3 i3status dmenu conky xterm chromium stow xbindkeys feh"
-	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop xorg-xlsfonts xorg-xfontsel"
-	GOHUDEPS="xorg-fonts-encodings xorg-fonts-alias xorg-font-utils fontconfig"
+
+	PACKAGES1="alsa-utils mesa xf86-video-{vesa,intel,fbdev} xf86-input-synaptics"
+	PACKAGES2="i3 dmenu conky stow xbindkeys feh"
+	PACKAGES3="xorg-{server,xinit,xclock,twm,xprop,xlsfonts,xfontsel}"
+	GOHUDEPS="xorg-fonts-{encodings,alias} xorg-font-utils fontconfig"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
 		pacman -S --noconfirm virtualbox-guest-modules-arch virtualbox-guest-utils
 	}
-	
+
 	# Add more space to a non-virtual machine
 	phys_machine_resize(){
 		lvresize -L -120G ArchLinux/pool <<< "y"
@@ -149,7 +149,7 @@ install_x(){
 		btrfs filesystem resize max /home
 	}
 
-	
+
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES1
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES2
 	pacman --needed --noconfirm --noprogressbar -S $PACKAGES3
@@ -157,10 +157,10 @@ install_x(){
 
 	# Run only if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null && x_for_vbox
-	
+
 	# Do not run if this is a VirtualBox guest
 	lspci | grep -e VGA -e 3D | grep VirtualBox > /dev/null || phys_machine_resize
-	
+
 	echo "exec i3" > /home/$USER/.xinitrc
 	[[ -f /home/$USER/.Xauthority ]] && rm /home/$USER/.Xauthority
 
@@ -196,20 +196,20 @@ build(){
 	# Initialize progress bar
     progress_bar " Building extras" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	# Fetch scripts to be run by $USER
 	wget https://raw.github.com/MarkEmmons/ArchInstaller/master/install/user_scripts.sh
 	mv user_scripts.sh /usr/bin/user_scripts
 	chmod a+x /usr/bin/user_scripts
-	
+
 	# Install additional packages
-	DEV_PACKAGES="nodejs npm ctags clang cmake rust cargo imagemagick"
-	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools leafpad"
-	LANG_PACKAGES="btrfs-progs ruby valgrind scrot ncmpcpp htop"
+	DEV_PACKAGES="nodejs npm ctags clang cmake python python2 ruby rust cargo imagemagick"
+	WEBDEV_PACKAGES="python-pip gdb yarn mongodb mongodb-tools"
+	LANG_PACKAGES="btrfs-progs valgrind scrot htop"
 	VM_PACKAGES="docker docker-machine virtualbox virtualbox-host-modules-arch"
 
 	pacman --needed --noconfirm --noprogressbar -S $DEV_PACKAGES
-	
+
 	# Add a wait script and log results separately
 	sudo -u $USER user_scripts > /var/log/install/chroot/user_scripts.log 2>&1 &
 	PID=$!
@@ -217,7 +217,7 @@ build(){
 
 	pacman --needed --noconfirm --noprogressbar -S $WEBDEV_PACKAGES
 	pacman --needed --noconfirm --noprogressbar -S $LANG_PACKAGES
-	
+
 	# Configure docker, for more info consult the wiki
 	pacman --needed --noconfirm --noprogressbar -S $VM_PACKAGES
 	tee /etc/modules-load.d/loop.conf <<< "loop"
@@ -226,7 +226,7 @@ build(){
 	# Wait for user scripts to finish
 	echo "Waiting on user scripts"
 	wait $PID
-	
+
 	# Install gohu and wal
 	cd /home/$USER/packages/gohufont && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
 	cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
@@ -237,7 +237,7 @@ build(){
 
 	# Don't need these anymore
 	rm /usr/bin/user_scripts
-	
+
 	wait $BAR_ID
 }
 
@@ -259,9 +259,9 @@ get_runtime(){
 
 	H_END=$((10#$H_END))
 	M_END=$((10#$M_END))
-	S_END=$((10#$S_END))	
-	
-	if [[ $H_START -gt $H_END ]]; then 
+	S_END=$((10#$S_END))
+
+	if [[ $H_START -gt $H_END ]]; then
 		H_END=$(($H_END + 24))
 	fi
 

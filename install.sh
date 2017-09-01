@@ -1,199 +1,32 @@
 #!/bin/bash
 
-DIALOG_OK=0
-DIALOG_CANCEL=1
-DIALOG_ESC=255
-
-ERR_MESSAGE=""
-
-RET_CODE=0
-
-CRYPT=
-RE_CRYPT=
-HOST=
-ROOT=
-RE_ROOT=
-USER=
-PASS=
-RE_PASS=
-
-CACHE=0
-
-cache_packages(){
-
-	# See if an old installation is available
-	cryptsetup isLuks /dev/sda3 || return
-
-	# Unlock previous device
-	echo "Previous installation found, enter passphrase to unlock" >&3
-	cryptsetup luksOpen /dev/sda3 lvm < /dev/tty
-	
-	STAT_ARRAY=( "linux-api-headers"
-	"pambase"
-	"dhcpcd"
-	"man-pages"
-	"git"
-	"python2"
-	"http-parser"
-	"sudo"
-	"xterm"
-	"nodejs"
-	"feh"
-	"nodejs"
-	"Modifying pacstrap" 
-	"Successfully cached packages" )
-
-	# Initialize progress bar
-    progress_bar " Backing up pkg-cache" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
-    BAR_ID=$!
-	
-	# Mount the filesystems
-	echo "Mounting former file system"
-	mount /dev/ArchLinux/rootvol /mnt > /dev/null
-	RET=$?
-	while [[ $RET -gt 0 ]]; do
-		mount /dev/ArchLinux/rootvol /mnt > /dev/null
-		RET=$?
-	done
-	
-	# TODO: cache {dotfiles, aur packages, .vim/bundle}
-	
-	# Backup pacman cache
-	echo "Backing up pacman pkg cache"
-	tar -cvzf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg .
-	
-	# Modify pacstrap to untar pkg cache
-	echo "Modifying pacstrap"
-	sed '/Installing packages to/ i tar -xvf /tmp/pkg.tar.gz --directory /mnt/var/cache/pacman/pkg' -i $(which pacstrap)
-	
-	# Unmount before exiting
-	umount -R /mnt
-
-	# Close LUKS container
-	vgchange -a n ArchLinux
-	cryptsetup luksClose lvm
-	
-	echo "Successfully cached packages"
-	
-	CACHE=1
-}
+wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/defs.sh"
+source defs.sh
 
 # Clean disk and enable encryption
 prepare(){
-	
-	# Set colors... for fun
-	#/bin/echo -e "
-	#\e]P0000000
-	#\e]P1685742
-	#\e]P29d6a47
-	#\e]P3b36d43
-	#\e]P478824b
-	#\e]P5d99f57
-	#\e]P6c9a554
-	#\e]P7ead49b
-	#\e]P8666666
-	#\e]P9685742
-	#\e]PA9d6a47
-	#\e]PBb36d43
-	#\e]PC78824b
-	#\e]PDd99f57
-	#\e]PEc9a554
-	#\e]PFead49b
-	#"
-	#clear
-	
-	# Fetch some extra stuff
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/chroot.sh
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/progress_bar.sh
-	wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/archey
+
+    tput civis
+    clear
+
+    echo "Preparing to install ArchLinux"
+    echo
+
+    # Fetch some extra stuff
+	wget "$SRC$CHROOT"
+	wget "$SRC$PBAR"
+	wget "$SRC$ARCHEY"
 
 	# Dissalow screen blanking for installation
 	setterm -blank 0
-	
+
 	# Set time for time-keeping
 	rm /etc/localtime
 	ln -s /usr/share/zoneinfo/US/Central /etc/localtime
 	hwclock --systohc --utc
-	
-	while [[ $RET_CODE -ne 1 && $RET_CODE -ne 250 ]]; do
-    
-		IFS=$'\n'
-		set -f
-		exec 3>&1
-		
-		VALUES=$(dialog --title "Arch Linux Installer" \
-					--ok-label "Submit" \
-					--backtitle "Arch Linux" \
-					--colors \
-					--insecure \
-					--mixedform "Enter relevant installation data $ERR_MESSAGE" \
-		16 65 0 \
-			"Luks Passphrase:"          1 1 ""   1 25 30 0 1 \
-			"Retype Luks Passphrase:"   2 1 ""   2 25 30 0 1 \
-			"Hostname:"                 3 1 "$HOST"     3 25 20 0 0 \
-			"Root Password:"            4 1 ""    4 25 25 0 1 \
-			"Retype Root Password:"     5 1 ""    5 25 25 0 1 \
-			"Username:"                 6 1 "$USER"     6 25 20 0 0 \
-			"Password:"                 7 1 ""    7 25 25 0 1 \
-			"Retype Password:"          8 1 ""    8 25 25 0 1 \
-		2>&1 1>&3)
-		RET_CODE=$?
-		set $VALUES
-		CRYPT=$1 RE_CRYPT=$2 HOST=$3 ROOT=$4 RE_ROOT=$5 USER=$6 PASS=$7 RE_PASS=$8
-		
-		exec 3>&-
-		set +f
-		unset IFS
-		
-		case $RET_CODE in
-		$DIALOG_CANCEL)
-			dialog \
-			--clear \
-			--backtitle "$backtitle" \
-			--yesno "Really quit?" 10 30
-			case $? in
-			$DIALOG_OK)
-				clear
-				break
-				;;
-			$DIALOG_CANCEL)
-				RET_CODE=99
-				;;
-			esac
-			;;
-		$DIALOG_OK)
-			if [[ -z $CRYPT || -z $RE_CRYPT || -z $HOST || -z $ROOT || \
-				-z $RE_ROOT || -z $USER || -z $PASS || -z $RE_PASS ]]; then
-				ERR_MESSAGE="\Z1(Fill all fields)"
-			elif [[ $CRYPT != $RE_CRYPT || $ROOT != $RE_ROOT || \
-				$PASS != $RE_PASS ]]; then
-				ERR_MESSAGE="\Z1(Two passwords do not match)"
-			else
-				clear
-				unset RE_CRYPT; unset RE_ROOT;  unset RE_PASS
-				
-				sed "s|HOST_NAME_TO_BE|\"$HOST\"|" -i chroot.sh
-				sed "s|ROOT_PASS_TO_BE|\"$ROOT\"|" -i chroot.sh
-				sed "s|USER_NAME_TO_BE|\"$USER\"|" -i chroot.sh
-				sed "s|USER_PASS_TO_BE|\"$PASS\"|" -i chroot.sh
-				
-				unset HOST; unset ROOT; unset USER; unset PASS
-				break
-			fi
-			;;
-		$DIALOG_ESC)
-			clear
-			echo "Escape key pressed"
-			exit
-			;;
-		*)
-			clear
-			echo "Return code was $RET_CODE"
-			exit
-			;;
-		esac
-	done
-	
+
+    uinfo_dialog
+
 	# Echo start time
 	date > time.log
 }
@@ -212,11 +45,11 @@ begin(){
 	# Enable encryption module
 	echo "Enabling encryption"
 	modprobe -a dm-mod dm_crypt
-	
+
 	# Zap any former entry
 	echo "Zapping former partitions"
 	sgdisk --zap-all /dev/sda
-	
+
 	# Create partitions. Instructions can be modified in disk.txt
 	echo "Creating new partitions"
 	gdisk /dev/sda <<< "n
@@ -237,7 +70,7 @@ n
 w
 Y
 "
-	
+
 	echo "Done"
 	wait $BAR_ID
 }
@@ -253,7 +86,7 @@ encrypt(){
 	# Initialize progress bar
     progress_bar " Encrypting disk" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	echo "Encrypting disk..."
 	echo -n "$CRYPT" | \
 	cryptsetup -s 512 --key-file="-" luksFormat /dev/sda3
@@ -283,13 +116,13 @@ partition(){
 	# Initialize progress bar
     progress_bar " Partitioning" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	# Create a physical volume on top of the opened LUKS container
 	pvcreate /dev/mapper/lvm
 
 	# Create the volume group ArchLinux, adding the previously created physical volume to it
 	vgcreate ArchLinux /dev/mapper/lvm
-	
+
 	# Create all of the logical volumes on the volume group
 	lvcreate -L 10G ArchLinux -n rootvol
 	lvcreate -L 2G ArchLinux -n swapvol
@@ -309,10 +142,10 @@ partition(){
 	mount /dev/ArchLinux/homevol /mnt/home
 	mount /dev/sda2 /mnt/boot
 	swapon /dev/ArchLinux/swapvol
-	
+
 	wait $BAR_ID
 }
-	
+
 # Update mirror list for faster install times
 update_mirrors(){
 
@@ -324,7 +157,7 @@ update_mirrors(){
 	# Initialize progress bar
     progress_bar " Updating mirror list" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	#cp -vf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 	#sed '/^#\S/ s|#||' -i /etc/pacman.d/mirrorlist.backup
 	#rankmirrors -n 15 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
@@ -375,9 +208,9 @@ install_base(){
 	# Initialize progress bar
     progress_bar " Installing base system" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
     BAR_ID=$!
-	
+
 	#pacman -Syy
-	pacstrap /mnt base base-devel grub-bios
+	pacstrap /mnt base base-devel grub-bios ttf-liberation
 
 	# Copy over relevant files
 	mkdir /mnt/var/log/install
@@ -388,7 +221,7 @@ install_base(){
 
 	# Generate an fstab
 	genfstab -U -p /mnt >> /mnt/etc/fstab
-	
+
 	wait $BAR_ID
 }
 
@@ -406,26 +239,26 @@ finish(){
 	reboot
 }
 
-tput civis
-clear
-
-echo "Preparing to install ArchLinux"
-echo
-
 prepare
 
+# See if we can put this in prepare
 source progress_bar.sh
 
 tput setaf 7 && tput bold && echo "Installing Arch Linux" && tput sgr0
 echo ""
 tput setaf 7 && tput bold && echo ":: Running installation scripts..." && tput sgr0
+
 cache_packages >cache_packages.log 3>&2 2>&1
+
 sed "s|CACHE_VAL_TO_BE|\"$CACHE\"|" -i chroot.sh
+
 begin >begin.log 3>&2 2>&1
 encrypt >encrypt.log 3>&2 2>&1
 partition >partition.log 3>&2 2>&1
 update_mirrors >update_mirrors.log 3>&2 2>&1
 install_base >install_base.log 3>&2 2>&1
+
 tput setaf 7 && tput bold && echo ":: Chrooting into new system..." && tput sgr0
+
 chroot_mnt
 finish
