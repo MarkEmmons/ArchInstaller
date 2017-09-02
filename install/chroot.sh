@@ -100,13 +100,8 @@ configure_users(){
 # Install X Window System
 install_x(){
 
-    STAT_ARRAY=("installing wayland"
-    "installing xorg-fonts-encodings"
-    "installing xorg-font-utils"
-    "installing xorg-server-common"
-    "installing xorg-xinit"
-    "installing xorg-xclock"
-    "installing xorg-xprop")
+    STAT_ARRAY=("installing xorg-server-common"
+    "installing xorg-xinit")
 
 	# Initialize progress bar
     progress_bar " Installing Xorg" ${#STAT_ARRAY[@]} "${STAT_ARRAY[@]}" &
