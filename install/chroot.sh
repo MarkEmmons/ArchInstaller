@@ -109,8 +109,10 @@ install_x(){
 
 	PACKAGES1="alsa-utils mesa xf86-video-{vesa,intel,fbdev} xf86-input-synaptics"
 	PACKAGES2="i3 dmenu conky stow xbindkeys feh"
-	PACKAGES3="xorg-{server,xinit,xclock,twm,xprop,xlsfonts,xfontsel}"
-	GOHUDEPS="xorg-fonts-{encodings,alias} xorg-font-utils fontconfig"
+	#PACKAGES3="xorg-{server,xinit,xclock,twm,xprop,xlsfonts,xfontsel}"
+	PACKAGES3="xorg-server xorg-xinit xorg-xclock xorg-twm xorg-xprop xorg-xlsfonts xorg-xfontsel"
+	#GOHUDEPS="xorg-fonts-{encodings,alias} xorg-font-utils fontconfig"
+	GOHUDEPS="xorg-fonts-encodings xorg-fonts-alias xorg-font-utils fontconfig"
 
 	# Run when installing on VirtualBox
 	x_for_vbox(){
