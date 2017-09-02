@@ -148,9 +148,7 @@ install_x(){
 
 build(){
 
-    STAT_ARRAY=( "installing openssl"
-    "installing http-parser"
-    "installing nodejs"
+    STAT_ARRAY=( "installing nodejs"
     "installing cmake"
     "installing cargo"
     "installing virtualbox-host"
@@ -193,10 +191,10 @@ build(){
 	wait $PID
 
 	# Install gohu and wal
-	cd /home/$USER/packages/gohufont && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
-	cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
-	cd /home/$USER && sudo -u $USER wal -i wallpapers/ATAT.jpg
-	cd /
+	#cd /home/$USER/packages/gohufont && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
+	#cd ../wal-git && pacman --noconfirm --noprogressbar -U *.pkg.tar.xz
+	#cd /home/$USER && sudo -u $USER wal -i wallpapers/ATAT.jpg
+	#cd /
 
 	echo "We're done"
 
