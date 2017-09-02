@@ -1,6 +1,6 @@
 #!/bin/bash
 
-wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/defs.sh"
+wget https://raw.githubusercontent.com/MarkEmmons/ArchInstaller/master/install/defs.sh
 source defs.sh
 
 # Clean disk and enable encryption
