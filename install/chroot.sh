@@ -148,9 +148,9 @@ install_x(){
 
 build(){
 
+#    "installing cargo" rust is not being installed properly
     STAT_ARRAY=( "installing nodejs"
     "installing cmake"
-    "installing cargo"
     "installing virtualbox-host"
     "loop"
     "Waiting on user scripts"
