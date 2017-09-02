@@ -210,7 +210,7 @@ install_base(){
     BAR_ID=$!
 
 	#pacman -Syy
-	pacstrap /mnt base base-devel grub-bios ttf-liberation
+	pacstrap /mnt base base-devel grub-bios #ttf-liberation
 
 	# Copy over relevant files
 	mkdir /mnt/var/log/install
