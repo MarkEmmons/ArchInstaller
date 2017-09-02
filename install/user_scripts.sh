@@ -19,7 +19,7 @@ get_aur_packages(){
 
 	# Retrieve snapshots via parallel trickery
 	mkdir $HOME/packages
-	cd $HOME/packages && \	
+	cd $HOME/packages && \
 	printf "%s\n" "${AUR_PACKAGES[@]}" | parallel "git clone https://aur.archlinux.org/{}.git"
 	cd gohufont && makepkg
 	cd ../wal-git && makepkg
